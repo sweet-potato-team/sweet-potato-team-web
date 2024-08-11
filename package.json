@@ -10,6 +10,7 @@
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.10.3",
+    "cors": "^2.8.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.2",
@@ -17,7 +18,8 @@
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
     "sass": "^1.77.8",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "proxy": "http://localhost:8080"
   },
   "scripts": {
     "start": "react-scripts start",

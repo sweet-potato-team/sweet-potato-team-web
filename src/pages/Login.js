@@ -26,7 +26,7 @@ function Login() {
       document.cookie = `hexToken=${token}; expires=${new Date(expired)};`;
       // 儲存 Token
       if (res.data.success) {
-        navigate('/admin/products')
+        navigate('/admin/spaces')
       }
     } catch (error) {
       setLoginState(error.response.data);

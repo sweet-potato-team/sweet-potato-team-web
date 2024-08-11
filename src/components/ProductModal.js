@@ -94,7 +94,7 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
         <div className='modal-content'>
           <div className='modal-header'>
             <h1 className='modal-title fs-5' id='exampleModalLabel'>
-              { type === 'create' ? '建立新空間' : `編輯 ${tempData.title}`}
+              { type === 'create' ? '建立新商品' : `編輯 ${tempData.title}`}
             </h1>
             <button
               type='button'
@@ -133,12 +133,12 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
               <div className='col-sm-8'>
                 <div className='form-group mb-2'>
                   <label className='w-100' htmlFor='title'>
-                    空間名稱
+                    標題
                     <input
                       type='text'
                       id='title'
                       name='title'
-                      placeholder='請輸入空間名稱'
+                      placeholder='請輸入標題'
                       className='form-control'
                       onChange={handleChange}
                       value={tempData.title}
@@ -192,7 +192,7 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
                   </div>
                   <div className='form-group mb-2 col-md-6'>
                     <label className='w-100' htmlFor='price'>
-                      租金
+                      售價
                       <input
                         type='number'
                         id='price'
@@ -208,12 +208,12 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
                 <hr />
                 <div className='form-group mb-2'>
                   <label className='w-100' htmlFor='description'>
-                    空間描述
+                    產品描述
                     <textarea
                       type='text'
                       id='description'
                       name='description'
-                      placeholder='請輸入空間描述'
+                      placeholder='請輸入產品描述'
                       className='form-control'
                       onChange={handleChange}
                       value={tempData.description}
@@ -227,7 +227,7 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
                       type='text'
                       id='content'
                       name='content'
-                      placeholder='請輸入空間說明內容'
+                      placeholder='請輸入產品說明內容'
                       className='form-control'
                       onChange={handleChange}
                       value={tempData.content}
@@ -245,7 +245,7 @@ function ProductModal({ closeProductModal, getProducts, type, tempProduct }) {
                         type='checkbox'
                         id='is_enabled'
                         name='is_enabled'
-                        placeholder='是否啟用'
+                        placeholder='請輸入產品說明內容'
                         className='form-check-input'
                         onChange={handleChange}
                         checked={!!tempData.is_enabled}
