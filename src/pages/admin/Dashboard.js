@@ -83,6 +83,13 @@ function Dashboard() {
             </NavLink>
             <NavLink
               className='list-group-item list-group-item-action py-3'
+              to='/admin/spaces_rentals'
+            >
+              <i className='bi bi-receipt me-2' />
+              空間租借列表
+            </NavLink>
+            <NavLink
+              className='list-group-item list-group-item-action py-3'
               to='/admin/products'
             >
               <i className='bi bi-archive me-2' />
@@ -94,13 +101,6 @@ function Dashboard() {
             >
               <i className='bi bi-ticket-perforated-fill me-2' />
               優惠卷列表
-            </NavLink>
-            <NavLink
-              className='list-group-item list-group-item-action py-3'
-              to='/admin/orders'
-            >
-              <i className='bi bi-receipt me-2' />
-              訂單列表
             </NavLink>
           </ul>
         </div>

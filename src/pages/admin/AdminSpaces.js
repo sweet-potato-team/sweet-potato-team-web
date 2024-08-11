@@ -47,6 +47,9 @@ function AdminSpaces() {
         },
       });
       if (spaceRes.data && Array.isArray(spaceRes.data.results)) {
+        spaceRes.data.results.forEach(space => {
+          console.log('Loaded space:', space);
+        });
         setSpaces(spaceRes.data.results);
         setPagination({
           ...pagination,
@@ -120,7 +123,7 @@ function AdminSpaces() {
       <div className='text-end'>
         <button
           type='button'
-          className='btn btn-primary btn-sm'
+          className='btn btn-primary btn-sm' style={{ backgroundColor: '#6789bb' }}
           onClick={() => openSpaceModal('create', {})}
         >
           建立新空間
@@ -160,7 +163,7 @@ function AdminSpaces() {
               <td>
                 <button
                   type='button'
-                  className='btn btn-primary btn-sm'
+                  className='btn btn-primary btn-sm' style={{ backgroundColor: '#6789bb' }}
                   onClick={() => openSpaceModal('edit', space)}
                 >
                   編輯

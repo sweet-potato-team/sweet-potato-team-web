@@ -8,34 +8,34 @@ import {
 
 function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
   const [tempData, setTempData] = useState({
-    space_name: '',
-    space_location: '',
-    floor_plan_url: '',
-    photo_url: '',
+    spaceName: '',
+    spaceLocation: '',
+    floorPlanUrl: '',
+    photoUrl: '',
     capacity: 0,
-    internet_available: false,
-    audio_input_available: false,
-    video_input_available: false,
+    internetAvailable: false,
+    audioInputAvailable: false,
+    videoInputAvailable: false,
     facilities: '',
-    space_overview: '',
-    is_active: true,
+    spaceOverview: '',
+    isActive: true
   });
   const [, dispatch] = useContext(MessageContext)
 
   useEffect(() => {
     if (type === 'create') {
       setTempData({
-        space_name: '',
-        space_location: '',
-        floor_plan_url: '',
-        photo_url: '',
+        spaceName: '',
+        spaceLocation: '',
+        floorPlanUrl: '',
+        photoUrl: '',
         capacity: 0,
-        internet_available: false,
-        audio_input_available: false,
-        video_input_available: false,
+        internetAvailable: false,
+        audioInputAvailable: false,
+        videoInputAvailable: false,
         facilities: '',
-        space_overview: '',
-        is_active: true,
+        spaceOverview: '',
+        isActive: true,
       });
     } else if (type === 'edit') {
       setTempData(tempSpace);
@@ -44,12 +44,12 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
 
   const handleChange = (e) => {
     const { value, name } = e.target;
-    if (['capacity'].includes(name)) {
+    if (name === 'capacity') {
       setTempData({
         ...tempData,
         [name]: Number(value),
       });
-    } else if (['internet_available', 'audio_input_available', 'video_input_available', 'is_active'].includes(name)) {
+    } else if (['internetAvailable', 'audioInputAvailable', 'videoInputAvailable', 'isActive'].includes(name)) {
       setTempData({
         ...tempData,
         [name]: e.target.checked,
@@ -66,16 +66,30 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
     try {
       let api = `http://localhost:8080/spaces`;
       let method = 'post';
-      if (type === 'edit') {
-        api = `http://localhost:8080/spaces/${tempSpace.space_id}`;
+      let payload = { ...tempData }; // 複製 tempData，避免修改原對象
+
+      // if (type === 'edit') {
+      //   api = `http://localhost:8080/spaces/${tempSpace.spaceId}`;
+      //   method = 'put';
+      // }
+      // console.log(tempData);
+
+      // 如果是編輯模式，更新 API URL 並移除 spaceId
+      if (type === 'edit' && tempData.spaceId) {
+        api = `http://localhost:8080/spaces/${tempData.spaceId}`;
         method = 'put';
+        delete payload.spaceId; // 從數據中移除 spaceId
       }
-      const res = await axios[method](
-        api,
-        {
-          data: tempData,
+      console.log("Submitting data:", payload); // 打印提交的數據
+
+      const res = await axios({
+        method: method,
+        url: api,
+        headers: {
+          'Content-Type': 'application/json', // 確保Content-Type正確
         },
-      );
+        data: payload, // 直接傳遞payload
+      });
       console.log(res);
       handleSuccessMessage(dispatch, res);
       closeSpaceModal();
@@ -98,7 +112,7 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
         <div className='modal-content'>
           <div className='modal-header'>
             <h1 className='modal-title fs-5' id='exampleModalLabel'>
-              { type === 'create' ? '建立新空間' : `編輯 ${tempData.space_name}`}
+              { type === 'create' ? '建立新空間' : `編輯 ${tempData.spaceName}`}
             </h1>
             <button
               type='button'
@@ -111,58 +125,58 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
             <div className='row'>
               <div className='col-sm-6'>
                 <div className='form-group mb-2'>
-                  <label className='w-100' htmlFor='space_name'>
+                  <label className='w-100' htmlFor='spaceName'>
                     空間名稱
                     <input
                       type='text'
-                      id='space_name'
-                      name='space_name'
+                      id='spaceName'
+                      name='spaceName'
                       placeholder='請輸入空間名稱'
                       className='form-control'
                       onChange={handleChange}
-                      value={tempData.space_name}
+                      value={tempData.spaceName}
                     />
                   </label>
                 </div>
                 <div className='form-group mb-2'>
-                  <label className='w-100' htmlFor='space_location'>
+                  <label className='w-100' htmlFor='spaceLocation'>
                     空間位置
                     <input
                       type='text'
-                      id='space_location'
-                      name='space_location'
+                      id='spaceLocation'
+                      name='spaceLocation'
                       placeholder='請輸入空間位置'
                       className='form-control'
                       onChange={handleChange}
-                      value={tempData.space_location}
+                      value={tempData.spaceLocation}
                     />
                   </label>
                 </div>
                 <div className='form-group mb-2'>
-                  <label className='w-100' htmlFor='floor_plan_url'>
+                  <label className='w-100' htmlFor='floorPlanUrl'>
                     平面圖連結
                     <input
                       type='text'
-                      id='floor_plan_url'
-                      name='floor_plan_url'
+                      id='floorPlanUrl'
+                      name='floorPlanUrl'
                       placeholder='請輸入平面圖連結'
                       className='form-control'
                       onChange={handleChange}
-                      value={tempData.floor_plan_url}
+                      value={tempData.floorPlanUrl}
                     />
                   </label>
                 </div>
                 <div className='form-group mb-2'>
-                  <label className='w-100' htmlFor='photo_url'>
+                  <label className='w-100' htmlFor='photoUrl'>
                     照片連結
                     <input
                       type='text'
-                      id='photo_url'
-                      name='photo_url'
+                      id='photoUrl'
+                      name='photoUrl'
                       placeholder='請輸入照片連結'
                       className='form-control'
                       onChange={handleChange}
-                      value={tempData.photo_url}
+                      value={tempData.photoUrl}
                     />
                   </label>
                 </div>
@@ -197,16 +211,16 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                   </label>
                 </div>
                 <div className='form-group mb-2'>
-                  <label className='w-100' htmlFor='space_overview'>
+                  <label className='w-100' htmlFor='spaceOverview'>
                     空間概述
                     <textarea
                       type='text'
-                      id='space_overview'
-                      name='space_overview'
+                      id='spaceOverview'
+                      name='spaceOverview'
                       placeholder='請輸入空間概述'
                       className='form-control'
                       onChange={handleChange}
-                      value={tempData.space_overview}
+                      value={tempData.spaceOverview}
                     />
                   </label>
                 </div>
@@ -214,16 +228,16 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                   <div className='form-check'>
                     <label
                       className='form-check-label'
-                      htmlFor='internet_available'
+                      htmlFor='internetAvailable'
                     >
                       是否提供網路
                       <input
                         type='checkbox'
-                        id='internet_available'
-                        name='internet_available'
+                        id='internetAvailable'
+                        name='internetAvailable'
                         className='form-check-input'
                         onChange={handleChange}
-                        checked={tempData.internet_available}
+                        checked={tempData.internetAvailable}
                       />
                     </label>
                   </div>
@@ -232,16 +246,16 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                   <div className='form-check'>
                     <label
                       className='form-check-label'
-                      htmlFor='audio_input_available'
+                      htmlFor='audioInputAvailable'
                     >
                       是否提供聲音輸入
                       <input
                         type='checkbox'
-                        id='audio_input_available'
-                        name='audio_input_available'
+                        id='audioInputAvailable'
+                        name='audioInputAvailable'
                         className='form-check-input'
                         onChange={handleChange}
-                        checked={tempData.audio_input_available}
+                        checked={tempData.audioInputAvailable}
                       />
                     </label>
                   </div>
@@ -250,16 +264,16 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                   <div className='form-check'>
                     <label
                       className='form-check-label'
-                      htmlFor='video_input_available'
+                      htmlFor='videoInputAvailable'
                     >
                       是否提供顯示訊號輸入
                       <input
                         type='checkbox'
-                        id='video_input_available'
-                        name='video_input_available'
+                        id='videoInputAvailable'
+                        name='videoInputAvailable'
                         className='form-check-input'
                         onChange={handleChange}
-                        checked={tempData.video_input_available}
+                        checked={tempData.videoInputAvailable}
                       />
                     </label>
                   </div>
@@ -268,16 +282,16 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                   <div className='form-check'>
                     <label
                       className='form-check-label'
-                      htmlFor='is_active'
+                      htmlFor='isActive'
                     >
                       是否啟用
                       <input
                         type='checkbox'
-                        id='is_active'
-                        name='is_active'
+                        id='isActive'
+                        name='isActive'
                         className='form-check-input'
                         onChange={handleChange}
-                        checked={tempData.is_active}
+                        checked={tempData.isActive}
                       />
                     </label>
                   </div>

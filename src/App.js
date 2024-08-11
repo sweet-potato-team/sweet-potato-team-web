@@ -12,6 +12,9 @@ import ProductDetail from './pages/front/ProductDetail';
 import Cart from './pages/front/Cart';
 import Checkout from './pages/front/Checkout';
 import Success from './pages/front/Success';
+import Spaces from './pages/front/Spaces';
+import SpaceRental from './pages/front/SpaceRental';
+import AdminSpaceRentals from './pages/admin/AdminSpaceRentals';
 
 function App() {
 
@@ -20,6 +23,8 @@ function App() {
       <Routes>
         <Route path='/' element={<FrontLayout />}>
           <Route path='' element={<Home />}></Route>
+          <Route path='spaces' element={<Spaces />}></Route>
+          <Route path='spaces_rentals' element={<SpaceRental />}></Route>
           <Route path='products' element={<Products />}></Route>
           <Route path='product/:id' element={<ProductDetail />}></Route>
           <Route path='cart' element={<Cart />}></Route>
@@ -29,6 +34,7 @@ function App() {
         <Route path='/login' element={<Login />}></Route>
         <Route path='/admin' element={<Dashboard />}>
           <Route path='products' element={<AdminProducts />}></Route>
+          <Route path='spaces_rentals' element={<AdminSpaceRentals />}></Route>
           <Route path='spaces' element={<AdminSpaces />}></Route>
           <Route path='coupons' element={<AdminCoupons />}></Route>
           <Route path='orders' element={<AdminOrders />}></Route>

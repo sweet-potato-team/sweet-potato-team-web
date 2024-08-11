@@ -49,7 +49,7 @@ function Navbar({ cartData }) {
                 </NavLink>
               </li>
               <li className='nav-item active'>
-                <NavLink className='nav-link ps-0' to='/space'>
+                <NavLink className='nav-link ps-0' to='/spaces'>
                   空間列表
                 </NavLink>
               </li>
