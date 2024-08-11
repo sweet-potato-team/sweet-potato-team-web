@@ -74,12 +74,19 @@ function Dashboard() {
       <div className='d-flex' style={{ minHeight: 'calc(100vh - 56px)' }}>
         <div className='bg-light' style={{ width: '200px' }}>
           <ul className='list-group list-group-flush'>
+          <NavLink
+              className='list-group-item list-group-item-action py-3'
+              to='/admin/spaces'
+            >
+              <i className='bi bi-door-open me-2' />
+              空間列表
+            </NavLink>
             <NavLink
               className='list-group-item list-group-item-action py-3'
               to='/admin/products'
             >
-              <i className='bi bi-door-open me-2' />
-              空間列表
+              <i className='bi bi-archive me-2' />
+              產品列表
             </NavLink>
             <NavLink
               to='/admin/coupons'

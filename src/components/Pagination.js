@@ -2,50 +2,55 @@ function Pagination({ pagination, changePage }) {
   return (
     <nav aria-label='Page navigation example'>
       <ul className='pagination'>
-        <li className='page-item'>
+        {/* 上一頁按鈕 */}
+        <li className={`page-item ${pagination.offset === 0 ? 'disabled' : ''}`}>
           <a
             href='/'
             aria-label='Previous'
-            className={`page-link ${pagination.has_pre ? '' : 'disabled'}`}
+            className='page-link'
             onClick={(e) => {
-              e.preventDefault();
-              changePage(pagination.current_page - 1);
+              e.preventDefault(); // 防止預設的超連結跳轉行為
+              if (pagination.offset > 0) {
+                changePage(pagination.current_page - 1); // 切換到上一頁
+              }
             }}
           >
             <span aria-hidden='true'>&laquo;</span>
           </a>
         </li>
+        {/* 中間的頁數按鈕 */}
         {[...new Array(pagination.total_pages)].map(
           (
-            _,
+            _, // 忽略第一個參數，因為我們只需要索引
             i, // 索引位置
           ) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <li className='page-item' key={`${i}_page`}>
+            // 使用索引作為 key（這在實務中通常不推薦，這裡是為了簡單示範）
+            <li className={`page-item ${pagination.current_page === i + 1 ? 'active' : ''}`} key={`${i}_page`}>
               <a
-                className={`page-link ${
-                  i + 1 === pagination.current_page && 'active'
-                }`}
+                className='page-link'
                 href='/'
                 onClick={(e) => {
-                  e.preventDefault();
-                  changePage(i + 1);
+                  e.preventDefault(); // 防止預設的超連結跳轉行為
+                  changePage(i + 1); // 切換到所點擊的頁數
                 }}
               >
-                {i + 1}
+                {i + 1} {/* 顯示頁數 */}
               </a>
             </li>
           ),
         )}
-        <li className='page-item'>
+        {/* 下一頁按鈕 */}
+        <li className={`page-item ${pagination.offset + pagination.limit >= pagination.total ? 'disabled' : ''}`}>
           <a
-            className={`page-link ${pagination.has_next ? '' : 'disabled'}`}
-            onClick={(e) => {
-              e.preventDefault();
-              changePage(pagination.current_page + 1);
-            }}
+            className='page-link'
             href='/'
             aria-label='Next'
+            onClick={(e) => {
+              e.preventDefault(); // 防止預設的超連結跳轉行為
+              if (pagination.offset + pagination.limit < pagination.total) {
+                changePage(pagination.current_page + 1); // 切換到下一頁
+              }
+            }}
           >
             <span aria-hidden='true'>&raquo;</span>
           </a>
