@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+# 產學租借系統
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## ✅目前完成
 
-## Available Scripts
+- **前端（前台）**
+    
+    起始畫面：
+    
+    - 左邊按鈕：付費空間暫時放課程範例所給的product
+    - 右邊按鈕：放目前寫的space
+    - 管理員登入：用吳蕎榛帳密登入可到後台
+    
+    空間清單：
+    
+    - 空間圖片及其資訊可以以卡片形式顯示在畫面上
+    - 卡片右上方有租借該空間之按鈕，若後台設置此空間不啟用則按鈕無法點入
+    - 空間借用表單四步驟大致已完成
+    - 步驟一已經可以長按匡選鄰近時段，但畫面需要再優化
+    - 步驟四送出後可以成功在後台看到新租借訂單
+    
+    管理員登入：
+    
+    - 登入畫面已經美化
+    - 輸入吳蕎榛帳密後可以進入後台
+- **前端（後台，需登入才可進入）**
+    
+    空間列表：
+    
+    - 可以編輯、刪除特定空間
+    - 右上角可以新增新空間
+    - 每五個資料一筆，有分頁
+    
+    空間租借列表：
+    
+    - 同空間列表一樣，增改查刪都可
+- 後端
+    - 產品與訂單增改查減運作正常
 
-In the project directory, you can run:
+## ⚠️目前仍有問題、未完成
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. 資料表內容未符合系統要求，只是測試能夠前後台傳送
+2. 管理員登入的API是課程官方的，後續會改
+3. 租借訂單成立後，還不會寄email 
+4. 許多視窗任務完成後，點選確認不會自己關掉，要按叉叉（租借訂單的確認、刪除資料）
+5. 被選中的時間能夠被重複選擇，後續會改
+6. 仍保留一些原本的系統痕跡，之後抹除
+7. Navbar 未完成
+8. 整體配色看起來像被鬼打到，重點是我根本沒有弄成這個顏色啊氣死我了
+9. 目前都在本地端執行，尚未在虛擬機上測試

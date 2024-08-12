@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Step3({ nextStep, prevStep, rentalData }) {
+function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
   const containerStyle = {
     backgroundColor: '#f8f9fa',
     padding: '2rem',
@@ -58,6 +58,11 @@ function Step3({ nextStep, prevStep, rentalData }) {
     color: '#fff',
   };
 
+  const handleConfirmAndNext = async () => {
+    await handleConfirm(); // 激活 handleConfirm 函數
+    nextStep(); // POST成功後進入下一步
+  };
+
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>確認資料</h2>
@@ -74,7 +79,7 @@ function Step3({ nextStep, prevStep, rentalData }) {
         <button style={prevButtonStyle} onClick={prevStep}>
           上一步
         </button>
-        <button style={confirmButtonStyle} onClick={nextStep}>
+        <button style={confirmButtonStyle} onClick={handleConfirmAndNext}>
           確認預約
         </button>
       </div>

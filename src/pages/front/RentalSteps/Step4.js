@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-function Step4({ rentalData }) {
+function Step4({ rentalData, handleClose }) {  // 接收 handleClose prop
   const containerStyle = {
     backgroundColor: '#f8f9fa',
     padding: '2rem',
@@ -27,43 +27,17 @@ function Step4({ rentalData }) {
     marginTop: '2rem',
   };
 
-  useEffect(() => {
-    const postData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/spaceRentals', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            spaceRentalUnit: rentalData.unit,
-            spaceRentalLocation: rentalData.location,
-            spaceRentalDateTime: rentalData.dateTime,
-            spaceRentalPhone: rentalData.phone,
-            spaceRentalEmail: rentalData.email,
-            spaceRentalReason: rentalData.reason,
-            spaceRentalRenter: rentalData.renter,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        console.log('Data submitted successfully');
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    postData();
-  }, [rentalData]);
+  const handleClick = () => {
+    if (handleClose) {
+      handleClose(); // 調用父組件傳來的 handleClose 函數來關閉視窗
+    }
+  };
 
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>申請成功</h2>
       <p>已將預約資料送至所填寫之郵箱，請查收並等待管理員審核。</p>
-      <button style={buttonStyle}>確認</button>
+      <button style={buttonStyle} onClick={handleClick}>確認</button> {/* 點擊確認按鈕時調用 handleClick */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import Pagination from '../../components/Pagination';
@@ -28,7 +28,7 @@ function Spaces() {
     setSelectedSpace(null);
   };
 
-  const getSpaces = async (page = 1) => {
+  const getSpaces = useCallback(async (page = 1) => {
     const newOffset = (page - 1) * pagination.limit;
     setLoading(true);
     try {
@@ -41,13 +41,13 @@ function Spaces() {
 
       if (spaceRes.data && Array.isArray(spaceRes.data.results)) {
         setSpaces(spaceRes.data.results);
-        setPagination({
-          ...pagination,
+        setPagination(prev => ({
+          ...prev,
           offset: newOffset,
           total: spaceRes.data.total,
           current_page: page,
           total_pages: Math.ceil(spaceRes.data.total / pagination.limit),
-        });
+        }));
       } else {
         setSpaces([]);
       }
@@ -57,11 +57,11 @@ function Spaces() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.limit]);
 
   useEffect(() => {
     getSpaces(1);
-  }, []);
+  }, [getSpaces]);
 
   return (
     <>
@@ -120,7 +120,7 @@ function Spaces() {
           <Modal.Title>租借空間：{selectedSpace && selectedSpace.spaceName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedSpace && <SpaceRental space={selectedSpace} />}
+          {selectedSpace && <SpaceRental space={selectedSpace} handleClose={handleCloseModal} />} {/* 傳遞 handleCloseModal 到 SpaceRental */}
         </Modal.Body>
       </Modal>
     </>

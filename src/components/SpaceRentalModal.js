@@ -50,7 +50,7 @@ function SpaceRentalModal({ closeSpaceRentalModal, getSpaceRentals, type, tempRe
       let api = `http://localhost:8080/spaceRentals`;
       let method = 'post';
       let payload = { ...tempData }; // 複製 tempData，避免修改原對象
-
+  
       // 如果是編輯模式，更新 API URL 並移除 rentalId
       if (type === 'edit' && tempRental.spaceRentalId) {
         api = `http://localhost:8080/spaceRentals/${tempRental.spaceRentalId}`;
@@ -58,7 +58,7 @@ function SpaceRentalModal({ closeSpaceRentalModal, getSpaceRentals, type, tempRe
         delete payload.spaceRentalId; // 從數據中移除 rentalId
       }
       console.log("Submitting data:", payload); // 打印提交的數據
-
+  
       const res = await axios({
         method: method,
         url: api,
@@ -76,6 +76,7 @@ function SpaceRentalModal({ closeSpaceRentalModal, getSpaceRentals, type, tempRe
       handleErrorMessage(dispatch, error);
     }
   };
+  
 
   return (
     <>
