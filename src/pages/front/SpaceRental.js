@@ -18,11 +18,11 @@ function SpaceRental({ space, handleClose }) {  // 接收 handleClose prop
   });
 
   const nextStep = () => {
-    setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));  // 确保最多到Step4
+    setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));  // 確保最多到Step4
   };
 
   const prevStep = () => {
-    setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));  // 确保最少到Step1
+    setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));  // 確保最少到Step1
   };
 
   const handleChange = (input) => (e) => {
@@ -31,6 +31,7 @@ function SpaceRental({ space, handleClose }) {  // 接收 handleClose prop
 
   const handleConfirm = async () => {
     try {
+      // 首先，發送POST請求來儲存租借資料
       const response = await axios.post('http://localhost:8080/spaceRentals', {
         spaceRentalUnit: rentalData.unit,
         spaceRentalLocation: rentalData.location,
@@ -42,7 +43,30 @@ function SpaceRental({ space, handleClose }) {  // 接收 handleClose prop
       });
 
       console.log('POST response:', response.data);
-      setCurrentStep(4); // 直接将 currentStep 设置为 4，进入 Step4
+
+      // 接著，發送郵件通知使用者
+      await axios.post('http://localhost:8080/sendEmail', {
+        to: rentalData.email,  // 使用者的email地址
+        subject: '租借空間確認通知',  // 郵件標題
+        body: `
+          親愛的${rentalData.renter}，
+
+          您的租借申請已成功提交。以下是您的租借詳情：
+          - 租借空間：${rentalData.location}
+          - 租借日期與時段：${rentalData.dateTime}
+          - 申請單位：${rentalData.unit}
+          - 租借事由：${rentalData.reason}
+
+          如有任何問題，請隨時與我們聯繫。
+
+          此致，
+          您的租借管理團隊
+        `  // 郵件內容
+      });
+
+      console.log('Email sent to:', rentalData.email);
+
+      setCurrentStep(4); // 直接將 currentStep 設定為 4，進入 Step4
     } catch (error) {
       console.error('POST error:', error);
     }
