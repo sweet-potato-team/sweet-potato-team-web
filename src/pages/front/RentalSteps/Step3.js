@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const containerStyle = {
     backgroundColor: '#f8f9fa',
     padding: '2rem',
@@ -42,6 +44,7 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
     fontSize: '1rem',
     borderRadius: '5px',
     cursor: 'pointer',
+    border: 'none',
   };
 
   const prevButtonStyle = {
@@ -53,14 +56,21 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
 
   const confirmButtonStyle = {
     ...buttonStyle,
-    backgroundColor: '#007bff',
-    borderColor: '#007bff',
+    backgroundColor: isSubmitting ? '#6c757d' : '#007bff',
+    borderColor: isSubmitting ? '#6c757d' : '#007bff',
     color: '#fff',
+    cursor: isSubmitting ? 'not-allowed' : 'pointer',
   };
 
   const handleConfirmAndNext = async () => {
-    await handleConfirm(); // 激活 handleConfirm 函數
-    nextStep(); // POST成功後進入下一步
+    setIsSubmitting(true);
+    try {
+      await handleConfirm(); // 激活 handleConfirm 函數
+      nextStep(); // POST成功後進入下一步
+    } catch (error) {
+      // 若有錯誤發生，可以在這裡處理，並將 isSubmitting 設回 false
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,8 +89,12 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
         <button style={prevButtonStyle} onClick={prevStep}>
           上一步
         </button>
-        <button style={confirmButtonStyle} onClick={handleConfirmAndNext}>
-          確認預約
+        <button
+          style={confirmButtonStyle}
+          onClick={handleConfirmAndNext}
+          disabled={isSubmitting} // 按鈕被禁用時不允許點擊
+        >
+          {isSubmitting ? '正在送出' : '確認預約'}
         </button>
       </div>
     </div>
