@@ -36,7 +36,6 @@ function App() {
           <Route path='products' element={<AdminProducts />}></Route>
           <Route path='spaces_rentals' element={<AdminSpaceRentals />}></Route>
           <Route path='spaces' element={<AdminSpaces />}></Route>
-          <Route path='spaces' element={<AdminSpaces />}></Route>
           <Route path='coupons' element={<AdminCoupons />}></Route>
           <Route path='orders' element={<AdminOrders />}></Route>
         </Route>

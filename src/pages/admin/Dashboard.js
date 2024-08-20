@@ -1,47 +1,62 @@
 import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import Message from '../../components/Message';
 import { MessageContext, messageReducer, initState } from '../../store/messageStore';
 
 function Dashboard() {
   const navigate = useNavigate();
-  const reducer = useReducer(messageReducer, initState);
+  const [state, dispatch] = useReducer(messageReducer, initState);
+  const [token, setToken] = useState(null);
 
   const logout = () => {
-    document.cookie = 'hexToken=;';
+    document.cookie = 'hexToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // 清除 token
     navigate('/login');
   };
 
-  // 取出 Token
-  const token = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('hexToken='))
-    ?.split('=')[1];
-  axios.defaults.headers.common['Authorization'] = token;
   useEffect(() => {
-    if (!token) {
-      return navigate('/login');
+    const cookieToken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('hexToken='))
+      ?.split('=')[1];
+    
+    if (cookieToken) {
+      setToken(cookieToken);
+    } else {
+      navigate('/login');
     }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!token) return;
+  
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+  
     (async () => {
       try {
-        await axios.post('/v2/api/user/check');
+        const response = await axios.post('http://localhost:8080/users/check', {}, { headers });
+        if (response.data.isValid) {
+          navigate('/admin/spaces'); // 僅在成功驗證後跳轉
+        }
       } catch (error) {
-        if (!error.response.data.success) {
+        if (error.response && error.response.status === 403) {
           navigate('/login');
         }
       }
     })();
-  }, [navigate, token]);
-
+  }, [token, navigate]); // 在這裡添加 navigate
+  
   return (
-    <MessageContext.Provider value={reducer}>
+    <MessageContext.Provider value={[state, dispatch]}>
       <Message />
       <nav className='navbar navbar-expand-lg bg-dark'>
         <div className='container-fluid'>
-          <p className='text-white mb-0' style={{ fontWeight: 'bold', fontSize: '28px'  }}>
+          <p className='text-white mb-0' style={{ fontWeight: 'bold', fontSize: '28px' }}>
             <i className="bi bi-house-gear">  </i>
-              產學營運中心空間租借系統後台管理系統</p>
+            產學營運中心空間租借系統後台管理系統
+          </p>
           <button
             className='navbar-toggler'
             type='button'
@@ -74,7 +89,7 @@ function Dashboard() {
       <div className='d-flex' style={{ minHeight: 'calc(100vh - 56px)' }}>
         <div className='bg-light' style={{ width: '200px' }}>
           <ul className='list-group list-group-flush'>
-          <NavLink
+            <NavLink
               className='list-group-item list-group-item-action py-3'
               to='/admin/spaces'
             >

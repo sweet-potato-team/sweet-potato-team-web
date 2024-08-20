@@ -60,6 +60,9 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
     borderColor: isSubmitting ? '#6c757d' : '#007bff',
     color: '#fff',
     cursor: isSubmitting ? 'not-allowed' : 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   };
 
   const handleConfirmAndNext = async () => {
@@ -94,7 +97,19 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
           onClick={handleConfirmAndNext}
           disabled={isSubmitting} // 按鈕被禁用時不允許點擊
         >
-          {isSubmitting ? '正在送出' : '確認預約'}
+          {isSubmitting ? (
+            <>
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+                style={{ marginRight: '8px' }}
+              ></span>
+              正在送出
+            </>
+          ) : (
+            '確認預約'
+          )}
         </button>
       </div>
     </div>

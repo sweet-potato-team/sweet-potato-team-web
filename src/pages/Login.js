@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const navigate = useNavigate() //轉址登入後進到後台
+
   const [data, setData] = useState({
-    username: '',
+    email: '',   
     password: '',
   });
+  
   const [loginState, setLoginState] = useState({});
 
   const handleChange = (e) => {
@@ -19,19 +21,28 @@ function Login() {
 
   //api的發送
   const submit = async (e) => {
+    e.preventDefault();  // 避免表單的默認提交行為
+    console.log('Sending login request with data:', data);
     try {
-      const res = await axios.post('/v2/admin/signin', data);//api路徑+資料
-      const { token, expired } = res.data;
-      console.log(res.data);
-      document.cookie = `hexToken=${token}; expires=${new Date(expired)};`;
-      // 儲存 Token
+      const res = await axios.post('http://localhost:8080/users/login', data);
+      console.log('Login response:', res.data);
+      
+      const { token } = res.data;
+      document.cookie = `hexToken=${token}; expires=${new Date(new Date().getTime() + 3600 * 1000).toUTCString()};`;
+  
       if (res.data.success) {
-        navigate('/admin/spaces')
+        console.log('Login successful, navigating to /admin/spaces');
+        navigate('/admin/spaces');
+      } else {
+        console.log('Login failed, no navigation');
       }
     } catch (error) {
+      console.error('Login error:', error);
       setLoginState(error.response.data);
     }
   };
+  
+  
 
   return (
     <div
@@ -71,12 +82,11 @@ function Login() {
             <input
               id='email'
               className='form-control'
-              name='username'
+              name='email'  // 確保這裡的 name 是 email
               type='email'
               placeholder='請輸入帳號'
-              borderRadius= '0.5 rem'
               onChange={handleChange}
-              style={{ width: '100%' }} // 使输入框宽度填充整个表单
+              style={{ width: '100%' }}
             />
           </label>
         </div>
@@ -90,10 +100,11 @@ function Login() {
               id='password'
               placeholder='請輸入密碼'
               onChange={handleChange}
-              style={{ width: '100%' }} // 使输入框宽度填充整个表单
+              style={{ width: '100%' }}
             />
           </label>
         </div>
+
         <button
           type='button'
           className='btn btn-primary'
