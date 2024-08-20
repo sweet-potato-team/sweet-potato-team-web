@@ -1,43 +1,36 @@
 import { Routes, Route} from 'react-router-dom';
+
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import AdminSpaces from './pages/admin/AdminSpaces';
-import AdminProducts from './pages/admin/AdminProducts';
-import AdminCoupons from './pages/admin/AdminCoupons';
-import AdminOrders from './pages/admin/AdminOrders';
-import FrontLayout from './pages/front/FrontLayout';
+import AdminPaidSpaces from './pages/admin/AdminPaidSpaces';
 import Home from './pages/front/Home';
-import Products from './pages/front/Products';
-import ProductDetail from './pages/front/ProductDetail';
-import Cart from './pages/front/Cart';
-import Checkout from './pages/front/Checkout';
-import Success from './pages/front/Success';
 import Spaces from './pages/front/Spaces';
 import SpaceRental from './pages/front/SpaceRental';
 import AdminSpaceRentals from './pages/admin/AdminSpaceRentals';
+import AdminPaidSpaceRentals from './pages/admin/AdminPaidSpaceRentals';
+import AdminManageDocuments from './pages/admin/AdminManageDocuments';
+import AdminManageCharges from './pages/admin/AdminManageCharges';
 
 function App() {
 
   return (
     <div className='App'>
       <Routes>
-        <Route path='/' element={<FrontLayout />}>
-          <Route path='' element={<Home />}></Route>
-          <Route path='spaces' element={<Spaces />}></Route>
-          <Route path='spaces_rentals' element={<SpaceRental />}></Route>
-          <Route path='products' element={<Products />}></Route>
-          <Route path='product/:id' element={<ProductDetail />}></Route>
-          <Route path='cart' element={<Cart />}></Route>
-          <Route path='checkout' element={<Checkout />}></Route>
-          <Route path='success/:orderId' element={<Success />}></Route>
-        </Route>
+        {/* 直接將這些頁面掛載在 '/' 路徑下 */}
+        <Route path='/' element={<Home />}></Route>
+        <Route path='spaces' element={<Spaces />}></Route>
+        <Route path='space_rentals' element={<SpaceRental />}></Route>
+        
         <Route path='/login' element={<Login />}></Route>
-        <Route path='/admin' element={<Dashboard />}>
-          <Route path='products' element={<AdminProducts />}></Route>
-          <Route path='spaces_rentals' element={<AdminSpaceRentals />}></Route>
+        <Route path='/admin' element={<Dashboard />}>                   
+          <Route path='space_rentals' element={<AdminSpaceRentals />}></Route>
           <Route path='spaces' element={<AdminSpaces />}></Route>
-          <Route path='coupons' element={<AdminCoupons />}></Route>
-          <Route path='orders' element={<AdminOrders />}></Route>
+          <Route path='paid_spaces' element={<AdminPaidSpaces />}></Route>
+          <Route path='paid_space_rentals' element={<AdminPaidSpaceRentals />}></Route>
+          <Route path='manage_documents' element={<AdminManageDocuments />}></Route>
+          <Route path='manage_charges' element={<AdminManageCharges />}></Route>
+          {/* <Route path='manage_times' element={<AdminManageTimes />}></Route> */}
         </Route>
       </Routes>
     </div>

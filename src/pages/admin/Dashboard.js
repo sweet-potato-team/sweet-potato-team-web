@@ -1,31 +1,30 @@
-import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useReducer, useState } from 'react';
 import Message from '../../components/Message';
 import { MessageContext, messageReducer, initState } from '../../store/messageStore';
+import SidebarLink from '../../components/SidebarLink'; // 引入SidebarLink组件
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [state, dispatch] = useReducer(messageReducer, initState);
-  const [token, setToken] = useState(null);
+  const reducer = useReducer(messageReducer, initState);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const logout = () => {
-    document.cookie = 'hexToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT'; // 清除 token
+    document.cookie = 'hexToken=;';
     navigate('/login');
   };
 
-  useEffect(() => {
-    const cookieToken = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('hexToken='))
-      ?.split('=')[1];
-    
-    if (cookieToken) {
-      setToken(cookieToken);
-    } else {
-      navigate('/login');
-    }
-  }, [navigate]);
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // 取出 Token
+  const token = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('hexToken='))
+    ?.split('=')[1];
+  axios.defaults.headers.common['Authorization'] = token;
 
   useEffect(() => {
     if (!token) return;
@@ -47,77 +46,43 @@ function Dashboard() {
       }
     })();
   }, [token, navigate]); // 在這裡添加 navigate
-  
+
   return (
-    <MessageContext.Provider value={[state, dispatch]}>
+    <MessageContext.Provider value={reducer}>
       <Message />
-      <nav className='navbar navbar-expand-lg bg-dark'>
-        <div className='container-fluid'>
-          <p className='text-white mb-0' style={{ fontWeight: 'bold', fontSize: '28px' }}>
-            <i className="bi bi-house-gear">  </i>
-            產學營運中心空間租借系統後台管理系統
-          </p>
-          <button
-            className='navbar-toggler'
-            type='button'
-            data-bs-toggle='collapse'
-            data-bs-target='#navbarNav'
-            aria-controls='navbarNav'
-            aria-expanded='false'
-            aria-label='Toggle navigation'
-          >
-            <span className='navbar-toggler-icon' />
-          </button>
-          <div
-            className='collapse navbar-collapse justify-content-end'
-            id='navbarNav'
-          >
-            <ul className='navbar-nav'>
-              <li className='nav-item'>
-                <button
-                  type='button'
-                  className='btn btn-sm btn-light'
-                  onClick={logout}
-                >
-                  登出
-                </button>
-              </li>
+      <div className='d-flex' style={{ minHeight: '100vh' }}>
+        <div className={`bg-light d-flex flex-column justify-content-between ${isCollapsed ? 'collapsed-sidebar' : ''}`} style={{ width: isCollapsed ? '60px' : '200px', paddingTop: '20px' }}>
+          <div>
+            <div className="d-flex justify-content-between align-items-center px-3">
+              {!isCollapsed && <h4 style={{ margin: 0 }}>後臺管理</h4>}
+              <button className="btn btn-light btn-sm" onClick={toggleSidebar}>
+                <i className={`bi ${isCollapsed ? 'bi-arrow-right-square' : 'bi-arrow-left-square'}`}></i>
+              </button>
+            </div>
+            <ul className='list-group list-group-flush mt-3'>
+              <SidebarLink to='/admin/spaces' iconClass='bi bi-chat-text' label='免費空間 列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/paid_spaces' iconClass='bi bi-cash-coin' label='付費空間 列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/space_rentals' iconClass='bi bi-chat-text' label='免費空間 紀錄' isCollapsed={isCollapsed} activeColor='#415a77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/paid_space_rentals' iconClass='bi bi-cash-coin' label='付費空間 紀錄' isCollapsed={isCollapsed} activeColor='#415a77' defaultColor='#415A77' />
+              {/* <SidebarLink to='/admin/products' iconClass='bi bi-archive' label='產品列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/coupons' iconClass='bi bi-ticket-perforated-fill' label='優惠卷列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' /> */}
+              {/* 新增的連結 */}
+              <SidebarLink to='/admin/manage_times' iconClass='bi bi-clock-history' label='時間管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/manage_charges' iconClass='bi bi-ticket-perforated' label='收費管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/manage_documents' iconClass='bi bi-file-earmark-medical' label='文件管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
             </ul>
           </div>
-        </div>
-      </nav>
-      <div className='d-flex' style={{ minHeight: 'calc(100vh - 56px)' }}>
-        <div className='bg-light' style={{ width: '200px' }}>
-          <ul className='list-group list-group-flush'>
-            <NavLink
-              className='list-group-item list-group-item-action py-3'
-              to='/admin/spaces'
-            >
-              <i className='bi bi-door-open me-2' />
-              空間列表
-            </NavLink>
-            <NavLink
-              className='list-group-item list-group-item-action py-3'
-              to='/admin/spaces_rentals'
-            >
-              <i className='bi bi-receipt me-2' />
-              空間租借列表
-            </NavLink>
-            <NavLink
-              className='list-group-item list-group-item-action py-3'
-              to='/admin/products'
-            >
-              <i className='bi bi-archive me-2' />
-              產品列表
-            </NavLink>
-            <NavLink
-              to='/admin/coupons'
-              className='list-group-item list-group-item-action py-3'
-            >
-              <i className='bi bi-ticket-perforated-fill me-2' />
-              優惠卷列表
-            </NavLink>
-          </ul>
+          <div className='p-3'>
+            <button type='button' className='btn btn-sm btn-light w-100' onClick={logout}>
+              <i className="bi bi-box-arrow-right me-2" />
+              {!isCollapsed && '登出'}
+            </button>
+            {!isCollapsed && (
+              <div className="text-center mt-3">
+                <small className="text-muted">&copy; Potato team 🍠</small>
+              </div>
+            )}
+          </div>
         </div>
         <div className='w-100'>{token && <Outlet />}</div>
       </div>
