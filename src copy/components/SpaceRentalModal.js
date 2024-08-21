@@ -47,13 +47,13 @@ function SpaceRentalModal({ closeSpaceRentalModal, getSpaceRentals, type, tempRe
 
   const submit = async () => {
     try {
-      let api = `http://localhost:8080/spaceRentals`;
+      let api = `http://localhost:8080/space_rentals`;
       let method = 'post';
       let payload = { ...tempData }; // 複製 tempData，避免修改原對象
   
       // 如果是編輯模式，更新 API URL 並移除 rentalId
       if (type === 'edit' && tempRental.spaceRentalId) {
-        api = `http://localhost:8080/spaceRentals/${tempRental.spaceRentalId}`;
+        api = `http://localhost:8080/space_rentals/${tempRental.spaceRentalId}`;
         method = 'put';
         delete payload.spaceRentalId; // 從數據中移除 rentalId
       }

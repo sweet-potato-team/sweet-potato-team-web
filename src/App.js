@@ -19,8 +19,8 @@ function App() {
       <Routes>
         {/* 直接將這些頁面掛載在 '/' 路徑下 */}
         <Route path='/' element={<Home />}></Route>
-        <Route path='spaces' element={<Spaces />}></Route>
-        <Route path='space_rentals' element={<SpaceRental />}></Route>
+          <Route path='spaces' element={<Spaces />}></Route>
+          <Route path='space_rentals' element={<SpaceRental />}></Route>
         
         <Route path='/login' element={<Login />}></Route>
         <Route path='/admin' element={<Dashboard />}>                   

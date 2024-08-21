@@ -32,7 +32,7 @@ function SpaceRental({ space, handleClose }) {
 
   const handleConfirm = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/spaceRentals', {
+      const response = await axios.post('http://localhost:8080/space_rentals', {
         spaceRentalUnit: rentalData.unit,
         spaceRentalLocation: rentalData.location,
         spaceRentalDateTime: rentalData.dateTime,

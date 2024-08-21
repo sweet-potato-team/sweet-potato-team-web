@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Step1 from './RentalSteps/Step1';
 import Step2 from './RentalSteps/Step2';
 import Step3 from './RentalSteps/Step3';
@@ -8,15 +8,22 @@ import axios from 'axios';
 function SpaceRental({ space, handleClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [rentalData, setRentalData] = useState({
-    unit: '',
-    location: '',
-    dateTime: '',
-    phone: '',
-    email: '',
-    reason: '',
-    renter: ''
+    spaceRentalUnit: '', // 申請單位
+    freeSpaceName: space.freeSpaceName, // 空間名稱
+    freeSpaceId: space.freeSpaceId, // 空間 ID
+    spaceRentalDateTime: '', // 申請時間
+    spaceRentalDateTimeCount: '', // 申請時數
+    spaceRentalPhone: '', // 聯絡電話
+    spaceRentalEmail: '', // 電子郵件
+    spaceRentalReason: '', // 申請理由
+    spaceRentalRenter: '' // 申請人
   });
   const [showWarning, setShowWarning] = useState(true);
+
+  useEffect(() => {
+    console.log('Current Step:', currentStep);
+    console.log('Rental Data:', rentalData);
+  }, [currentStep, rentalData]);
 
   const nextStep = () => {
     setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));
@@ -27,34 +34,39 @@ function SpaceRental({ space, handleClose }) {
   };
 
   const handleChange = (input) => (e) => {
-    setRentalData({ ...rentalData, [input]: e.target.value });
+    const newValue = { ...rentalData, [input]: e.target.value };
+    setRentalData(newValue);
+    console.log('Updated Rental Data:', newValue);
   };
 
   const handleConfirm = async () => {
+    console.log('Submitting Rental Data:', rentalData);
     try {
-      const response = await axios.post('http://localhost:8080/spaceRentals', {
-        spaceRentalUnit: rentalData.unit,
-        spaceRentalLocation: rentalData.location,
-        spaceRentalDateTime: rentalData.dateTime,
-        spaceRentalPhone: rentalData.phone,
-        spaceRentalEmail: rentalData.email,
-        spaceRentalReason: rentalData.reason,
-        spaceRentalRenter: rentalData.renter,
+      const response = await axios.post('http://localhost:8080/space_rentals', {
+        spaceRentalUnit: rentalData.spaceRentalUnit,
+        freeSpaceName: rentalData.freeSpaceName,
+        freeSpaceId: rentalData.freeSpaceId, // 確保這個字段被傳遞
+        spaceRentalDateTime: rentalData.spaceRentalDateTime,
+        spaceRentalDateTimeCount: rentalData.spaceRentalDateTimeCount, // 確保這個字段被傳遞
+        spaceRentalPhone: rentalData.spaceRentalPhone,
+        spaceRentalEmail: rentalData.spaceRentalEmail,
+        spaceRentalReason: rentalData.spaceRentalReason,
+        spaceRentalRenter: rentalData.spaceRentalRenter,
       });
 
       console.log('POST response:', response.data);
 
       await axios.post('http://localhost:8080/sendEmail', {
-        to: rentalData.email,
+        to: rentalData.spaceRentalEmail,
         subject: '租借空間確認通知',
         body: 
-          `親愛的${rentalData.renter}，
+          `親愛的${rentalData.spaceRentalRenter}，
 
           您的租借申請已成功提交。以下是您的租借詳情：
-          - 租借空間：${rentalData.location}
-          - 租借日期與時段：${rentalData.dateTime}
-          - 申請單位：${rentalData.unit}
-          - 租借事由：${rentalData.reason}
+          - 租借空間：${rentalData.freeSpaceName}
+          - 租借日期與時段：${rentalData.spaceRentalDateTime}
+          - 申請單位：${rentalData.spaceRentalUnit}
+          - 租借事由：${rentalData.spaceRentalReason}
 
           如有任何問題，請隨時與我們聯繫。
 
@@ -62,7 +74,7 @@ function SpaceRental({ space, handleClose }) {
           您的租借管理團隊`
       });
 
-      console.log('Email sent to:', rentalData.email);
+      console.log('Email sent to:', rentalData.spaceRentalEmail);
 
       setCurrentStep(4);
     } catch (error) {
@@ -180,7 +192,7 @@ function SpaceRental({ space, handleClose }) {
         </div>
       )}
       {!showWarning && currentStep < 4 && renderProgressBar()}
-      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.spaceName} />}
+      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.freeSpaceName} />}
       {!showWarning && currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} />}
       {!showWarning && currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} handleConfirm={handleConfirm} />}
       {!showWarning && currentStep === 4 && <Step4 rentalData={rentalData} handleClose={handleClose} />}

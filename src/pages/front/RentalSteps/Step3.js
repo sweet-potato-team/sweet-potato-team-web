@@ -80,14 +80,15 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
     <div style={containerStyle}>
       <h2 style={titleStyle}>確認資料</h2>
       <div style={summaryStyle}>
-        <p style={labelStyle}>申請單位: {rentalData.unit}</p>
-        <p style={labelStyle}>借用空間: {rentalData.location}</p>
-        <p style={labelStyle}>借用日期與時段: {rentalData.dateTime}</p>
-        <p style={labelStyle}>連絡電話: {rentalData.phone}</p>
-        <p style={labelStyle}>電子郵件: {rentalData.email}</p>
-        <p style={labelStyle}>借用事由: {rentalData.reason}</p>
-        <p style={labelStyle}>借用人: {rentalData.renter}</p>
+        <p style={labelStyle}>申請單位: {rentalData.spaceRentalUnit}</p>
+        <p style={labelStyle}>借用空間: {rentalData.freeSpaceName}</p>
+        <p style={labelStyle}>借用日期與時段: {rentalData.spaceRentalDateTime}</p>
+        <p style={labelStyle}>連絡電話: {rentalData.spaceRentalPhone}</p>
+        <p style={labelStyle}>電子郵件: {rentalData.spaceRentalEmail}</p>
+        <p style={labelStyle}>借用事由: {rentalData.spaceRentalReason}</p>
+        <p style={labelStyle}>借用人: {rentalData.spaceRentalRenter}</p>
       </div>
+
       <div style={buttonContainerStyle}>
         <button style={prevButtonStyle} onClick={prevStep}>
           上一步

@@ -32,7 +32,7 @@ function AdminSpaceRentals() {
   const getRentals = async (page = 1) => {
     const newOffset = (page - 1) * pagination.limit;
     try {
-      const rentalRes = await axios.get(`http://localhost:8080/spaceRentals`, {
+      const rentalRes = await axios.get(`http://localhost:8080/space_rentals`, {
         params: {
           limit: pagination.limit,
           offset: newOffset,
@@ -79,7 +79,7 @@ function AdminSpaceRentals() {
 
   const deleteRental = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/spaceRentals/${id}`);
+      const res = await axios.delete(`http://localhost:8080/space_rentals/${id}`);
       if (res.data.success) {
         getRentals(pagination.current_page);
         handleSuccessMessage(dispatch, res);

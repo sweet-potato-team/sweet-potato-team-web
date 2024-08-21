@@ -228,6 +228,10 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
                       <label htmlFor='free_floor_space_url_2'>照片連結 2 <span style={{ fontSize: '12px', color: '#888' }}>( 非必填 )</span></label>
                       <input type='text' id='free_floor_space_url_2' name='free_floor_space_url_2' value={tempData.free_floor_space_url_2 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.free_floor_space_url_2 ? '#AC6A6A' : 'initial' }} />
                     </div>
+                    <div className='form-group' style={{ marginTop: '10px' }}>
+                      <label htmlFor='free_floor_space_url_3'>照片連結 3 <span style={{ fontSize: '12px', color: '#888' }}>( 非必填 )</span></label>
+                      <input type='text' id='free_floor_space_url_3' name='free_floor_space_url_3' value={tempData.free_floor_space_url_3 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.free_floor_space_url_3 ? '#AC6A6A' : 'initial' }} />
+                    </div>
                   </td>
                   <td style={{ padding: '30px', marginBottom: '50px' }}>
                     <div className='form-group'>

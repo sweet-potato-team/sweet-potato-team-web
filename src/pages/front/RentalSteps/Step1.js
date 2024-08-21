@@ -26,6 +26,7 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     setIsSelecting(true);
     setStartSlot({ dayIndex, timeIndex });
     const selectedSlot = `${dayIndex}-${timeIndex}`;
+
     setSelectedSlots([selectedSlot]);
   };
 
@@ -73,10 +74,12 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     let lastDayIndex = null;
     let lastTimeIndex = null;
     let startSlot = null;
-
+    let totalHours = 0;
+  
     selectedSlots.forEach(slot => {
       const [dayIndex, timeIndex] = slot.split('-').map(Number);
-
+      totalHours += 1; // 每選擇一個時間段，累計一個小時
+  
       if (lastDayIndex === dayIndex && lastTimeIndex !== null && timeIndex === lastTimeIndex + 1) {
         // 如果是連續時間段，更新最後一個時間段
         lastTimeIndex = timeIndex;
@@ -90,19 +93,22 @@ function Step1({ nextStep, setRentalData, spaceName }) {
         lastTimeIndex = timeIndex;
       }
     });
-
+  
     // 添加最後的時間段
     if (startSlot) {
       selectedDates.push(formatSlot(startSlot, lastDayIndex, lastTimeIndex));
     }
-
+  
     setRentalData(prevData => ({
       ...prevData,
-      dateTime: selectedDates.join(', '),
-      location: spaceName  // 將選擇的空間名稱存入租借數據
+      spaceRentalDateTime: selectedDates.join(', '),
+      spaceRentalDateTimeCount: totalHours, // 記錄總共選擇了多少小時
+      freeSpaceName: spaceName  // 將選擇的空間名稱存入租借數據
     }));
     nextStep();
   };
+  
+
 
   // 格式化時間段為輸出格式
   const formatSlot = (startSlot, dayIndex, endSlot) => {
@@ -116,6 +122,7 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     const endTime = times[endSlot].split('-')[1];
 
     return `${daysOfWeek[dayIndex]} (${end.getMonth() + 1}/${end.getDate()}) ${startTime}-${endTime}`;
+
   };
 
   // 切換顯示的週

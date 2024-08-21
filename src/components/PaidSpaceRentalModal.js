@@ -145,56 +145,61 @@ function PaidSpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRen
     }));
   };
 
-  const validateFields = () => {
-    const requiredFields = [
-      'paidSpaceId', 'chargeId', 'paidSpaceRentalReason', 'paidSpaceRentalUsers', 'paidSpaceRentalActivityType',
-      'paidSpaceRentalUnitType', 'paidSpaceRentalUnit', 'paidSpaceRentalRenter', 'paidSpaceRentalPhone',
-      'paidSpaceRentalEmail', 'paidSpaceRentalDateTimeStart1', 'paidSpaceRentalDateTimeEnd1',
-      'paidSpaceRentalFeeSpace', 'paidSpaceRentalFeeClean'
-    ];
+// 驗證欄位函數
+const validateFields = () => {
+  const requiredFields = [
+      'paidSpaceId', 'chargeId', 'paidSpaceRentalReason', 'paidSpaceRentalUsers',
+      'paidSpaceRentalActivityType', 'paidSpaceRentalUnitType', 'paidSpaceRentalUnit',
+      'paidSpaceRentalRenter', 'paidSpaceRentalPhone', 'paidSpaceRentalEmail',
+      'paidSpaceRentalDateTimeStart1', 'paidSpaceRentalDateTimeEnd1',
+      'paidSpaceRentalFeeSpace', 'paidSpaceRentalFeeClean', 'paidSpaceRentalFeePermission'
+  ];
 
-    for (let field of requiredFields) {
-      if (!tempData[field]) {
-        alert(`Error: The field ${field} is required.`);
-        return false;
+  let isValid = true;
+  requiredFields.forEach(field => {
+      const value = tempData[field];
+      if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {
+          handleErrorMessage(dispatch, `Error: The field ${field} is required and cannot be empty.`);
+          isValid = false;
       }
-    }
+  });
 
-    if (type === 'create' && !tempData.paidSpaceRentalAgree) {
-      alert('錯誤：請確認使用者同意使用【付費空間】規則');
-      return false;
-    }
+  if (type === 'create' && !tempData.paidSpaceRentalAgree) {
+      handleErrorMessage(dispatch, '錯誤：請確認使用者同意使用【付費空間】規則');
+      isValid = false;
+  }
 
-    return true;
-  };
+  return isValid;
+};
 
-  const submit = async () => {
-    if (!validateFields()) {
+
+// 提交函數
+const submit = async () => {
+  if (!validateFields()) {
       return;
-    }
+  }
 
-    const api = `http://localhost:8080/paid_space_rentals${type === 'edit' && tempRental.paidSpaceRentalId ? `/${tempRental.paidSpaceRentalId}` : ''}`;
-    const method = type === 'edit' ? 'put' : 'post';
+  const api = `http://localhost:8080/paid_space_rentals${type === 'edit' && tempRental.paidSpaceRentalId ? `/${tempRental.paidSpaceRentalId}` : ''}`;
+  const method = type === 'edit' ? 'put' : 'post';
 
-    try {
+  try {
       const response = await axios[method](api, tempData, {
-        headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' },
       });
-    
+
       if (response.status === 200 || response.status === 201) {
-        handleSuccessMessage(dispatch, `${type === 'edit' ? 'Updated' : 'Created'} successfully`);
-        closeRentalModal();
-        getSpaceRentals();
+          handleSuccessMessage(dispatch, `${type === 'edit' ? 'Updated' : 'Created'} successfully`);
+          closeRentalModal();
+          getSpaceRentals();
       } else {
-        handleErrorMessage(dispatch, `Unexpected response status: ${response.status}`);
+          handleErrorMessage(dispatch, `Unexpected response status: ${response.status}`);
       }
-    } catch (error) {
+  } catch (error) {
       console.error('API Error:', error);
       const errorMessage = error.response?.data?.message || `Failed to ${type === 'edit' ? 'update' : 'create'}`;
       handleErrorMessage(dispatch, errorMessage);
-    }
-  };
-
+  }
+};
   return (
     <div className='modal fade' id='rentalModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
       <div className='modal-dialog modal-lg'>

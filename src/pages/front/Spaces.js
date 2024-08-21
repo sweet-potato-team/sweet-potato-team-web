@@ -1,9 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Modal, Button, Carousel } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import Pagination from '../../components/Pagination';
 import Loading from '../../components/Loading';
-import SpaceRental from './SpaceRental'; // 引入四步驟的租借流程組件
+import SpaceRental from './SpaceRental'; 
+import SpaceDetails from '../../components/SpaceDetails';
+import SpaceCarousel from '../../components/SpaceCarousel';
 
 function Spaces() {
   const [spaces, setSpaces] = useState([]);
@@ -16,8 +18,8 @@ function Spaces() {
   });
   const [isLoading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showPhotoModal, setShowPhotoModal] = useState(false); // 新增狀態以控制設備顯示的模態框
-  const [selectedSpace, setSelectedSpace] = useState(null); // 用於存儲選中的空間
+  const [showPhotoModal, setShowPhotoModal] = useState(false); 
+  const [selectedSpace, setSelectedSpace] = useState(null); 
 
   const handleShowModal = (space) => {
     setSelectedSpace(space);
@@ -50,6 +52,8 @@ function Spaces() {
         },
       });
 
+      console.log(spaceRes.data);
+
       if (spaceRes.data && Array.isArray(spaceRes.data.results)) {
         setSpaces(spaceRes.data.results);
         setPagination((prev) => ({
@@ -79,63 +83,15 @@ function Spaces() {
       <div className="container mt-md-5 mt-3 mb-7 full-height">
         <Loading isLoading={isLoading} />
         <div className="row">
-          {spaces.map((space) => {
-            return (
-              <div className="col-12 mb-4" key={space.spaceId}>
-                <div className="card border-0 shadow-sm position-relative">
-                  <div className="row g-0">
-                    <div className="col-md-4 position-relative">
-                      <Carousel indicators={false}>
-                        <Carousel.Item>
-                          <img
-                            src={space.photoUrl}
-                            className="d-block w-100"
-                            style={{ objectFit: 'cover', maxHeight: '300px' }}
-                            alt={space.spaceName}
-                          />
-                        </Carousel.Item>
-                        <Carousel.Item>
-                          <img
-                            src={space.floorPlanUrl}
-                            className="d-block w-100"
-                            style={{ objectFit: 'cover', maxHeight: '300px' }}
-                            alt={space.spaceName}
-                          />
-                        </Carousel.Item>
-                      </Carousel>
-                    </div>
-                    <div className="col-md-8 position-relative">
-                      <div className="card-body">
-                        <h4 className="card-title" style={{ fontWeight: 'bold' }}>{space.spaceName}</h4>
-                        <p className="card-text">位置: {space.spaceLocation}</p>
-                        <p className="card-text">座位數: {space.capacity}</p>
-                        <p className="card-text">網路: {space.internetAvailable ? '有線網路' : '無線網路'}</p>
-                        <p className="card-text">聲音輸入: {space.audioInputAvailable ? '有' : '無'}</p>
-                        <p className="card-text">顯示訊號輸入: {space.videoInputAvailable ? 'VGA, HDMI' : '無'}</p>
-                        <p className="card-text">設施: {space.facilities}</p>
-                        <p className="card-text">概述: {space.spaceOverview}</p>
-                      </div>
-                      <div className="position-absolute top-0 end-0 m-3 d-flex justify-content-between" style={{ width: '200px' }}>
-                        <Button
-                          variant="info"
-                          onClick={() => handleShowPhotoModal(space)} // 點擊後顯示設備圖片的模態框
-                        >
-                          顯示設備
-                        </Button>
-                        <Button
-                          variant={space.isActive ? 'success' : 'secondary'}
-                          onClick={() => space.isActive && handleShowModal(space)} // 點擊後顯示租借的模態框
-                          disabled={!space.isActive}
-                        >
-                          {space.isActive ? '線上租借' : '暫不可租借'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {spaces.length === 0 && <p>No spaces available.</p>}
+          {spaces.map((space, index) => (
+            <SpaceDetails
+              key={`${space.freeSpaceId}-${index}`} // 確保 key 的一致性
+              space={space}
+              handleShowModal={handleShowModal}
+              handleShowPhotoModal={handleShowPhotoModal}
+            />
+          ))}
         </div>
         <nav className="d-flex justify-content-center">
           <Pagination pagination={pagination} changePage={getSpaces} />
@@ -145,10 +101,10 @@ function Spaces() {
       {/* 線上租借模態框 */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>租借空間：{selectedSpace && selectedSpace.spaceName}</Modal.Title>
+          <Modal.Title>租借空間：{selectedSpace && selectedSpace.freeSpaceName}</Modal.Title> {/* 確保 selectedSpace 的一致性 */}
         </Modal.Header>
         <Modal.Body>
-          {selectedSpace && <SpaceRental space={selectedSpace} handleClose={handleCloseModal} />} {/* 傳遞 handleCloseModal 到 SpaceRental */}
+          {selectedSpace && <SpaceRental space={selectedSpace} handleClose={handleCloseModal} />} 
         </Modal.Body>
       </Modal>
 
@@ -157,11 +113,17 @@ function Spaces() {
         <Modal.Header closeButton />
         <Modal.Body>
           {selectedSpace && (
-            <img
-              src={selectedSpace.photoUrl}
-              className="d-block w-100"
-              style={{ objectFit: 'cover', maxHeight: '500px' }}
-              alt={selectedSpace.spaceName}
+            <SpaceCarousel
+              spaceId={selectedSpace.freeSpaceId}  // 確保 spaceId 的一致性
+              urls={[
+                selectedSpace.freeItemPhotoUrl1,
+                selectedSpace.freeItemPhotoUrl2,
+                selectedSpace.freeItemPhotoUrl3,
+                selectedSpace.freeItemPhotoUrl4,
+                selectedSpace.freeItemPhotoUrl5,
+              ]}
+              altText={selectedSpace.freeSpaceName}
+              maxHeight="500px"
             />
           )}
         </Modal.Body>

@@ -65,33 +65,34 @@ function Step2({ nextStep, prevStep, handleChange, rentalData }) {
       <form>
         <label style={labelStyle}>
           申請單位：
-          <input type="text" style={inputStyle} onChange={handleChange('unit')} value={rentalData.unit} />
+          <input type="text" style={inputStyle} onChange={handleChange('spaceRentalUnit')} value={rentalData.spaceRentalUnit} />
         </label>
         <label style={labelStyle}>
           借用空間：
-          <input type="text" style={inputStyle} value={rentalData.location} readOnly />
+          <input type="text" style={inputStyle} value={rentalData.freeSpaceName} readOnly />
         </label>
         <label style={labelStyle}>
           借用日期與時段：
-          <input type="text" style={inputStyle} value={rentalData.dateTime} readOnly />
+          <input type="text" style={inputStyle} value={rentalData.spaceRentalDateTime} readOnly />
         </label>
         <label style={labelStyle}>
           連絡電話：
-          <input type="text" style={inputStyle} onChange={handleChange('phone')} value={rentalData.phone} />
+          <input type="text" style={inputStyle} onChange={handleChange('spaceRentalPhone')} value={rentalData.spaceRentalPhone} />
         </label>
         <label style={labelStyle}>
           電子郵件：
-          <input type="email" style={inputStyle} onChange={handleChange('email')} value={rentalData.email} />
+          <input type="email" style={inputStyle} onChange={handleChange('spaceRentalEmail')} value={rentalData.spaceRentalEmail} />
         </label>
         <label style={labelStyle}>
           借用事由：
-          <input type="text" style={inputStyle} onChange={handleChange('reason')} value={rentalData.reason} />
+          <input type="text" style={inputStyle} onChange={handleChange('spaceRentalReason')} value={rentalData.spaceRentalReason} />
         </label>
         <label style={labelStyle}>
           借用人：
-          <input type="text" style={inputStyle} onChange={handleChange('renter')} value={rentalData.renter} />
+          <input type="text" style={inputStyle} onChange={handleChange('spaceRentalRenter')} value={rentalData.spaceRentalRenter} />
         </label>
       </form>
+
       <div style={buttonContainerStyle}>
         <button style={prevButtonStyle} onClick={prevStep}>
           上一步
