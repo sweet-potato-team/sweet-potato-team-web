@@ -26,7 +26,6 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     setIsSelecting(true);
     setStartSlot({ dayIndex, timeIndex });
     const selectedSlot = `${dayIndex}-${timeIndex}`;
-
     setSelectedSlots([selectedSlot]);
   };
 
@@ -75,16 +74,14 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     let lastTimeIndex = null;
     let startSlot = null;
     let totalHours = 0;
-  
-    selectedSlots.forEach(slot => {
-      const [dayIndex, timeIndex] = slot.split('-').map(Number);
+
+    selectedSlots.forEach(selectedSlot => {
+      const [dayIndex, timeIndex] = selectedSlot.split('-').map(Number);
       totalHours += 1; // 每選擇一個時間段，累計一個小時
-  
+
       if (lastDayIndex === dayIndex && lastTimeIndex !== null && timeIndex === lastTimeIndex + 1) {
-        // 如果是連續時間段，更新最後一個時間段
         lastTimeIndex = timeIndex;
       } else {
-        // 如果是新的一天或不連續的時間段，將之前的時間段添加到列表
         if (startSlot) {
           selectedDates.push(formatSlot(startSlot, lastDayIndex, lastTimeIndex));
         }
@@ -93,12 +90,11 @@ function Step1({ nextStep, setRentalData, spaceName }) {
         lastTimeIndex = timeIndex;
       }
     });
-  
-    // 添加最後的時間段
+
     if (startSlot) {
       selectedDates.push(formatSlot(startSlot, lastDayIndex, lastTimeIndex));
     }
-  
+
     setRentalData(prevData => ({
       ...prevData,
       spaceRentalDateTime: selectedDates.join(', '),
@@ -107,8 +103,6 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     }));
     nextStep();
   };
-  
-
 
   // 格式化時間段為輸出格式
   const formatSlot = (startSlot, dayIndex, endSlot) => {
@@ -122,7 +116,6 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     const endTime = times[endSlot].split('-')[1];
 
     return `${daysOfWeek[dayIndex]} (${end.getMonth() + 1}/${end.getDate()}) ${startTime}-${endTime}`;
-
   };
 
   // 切換顯示的週
@@ -166,12 +159,12 @@ function Step1({ nextStep, setRentalData, spaceName }) {
             <tr key={time}>
               <td style={{ padding: '12px', backgroundColor: '#f8f9fa', borderBottom: '1px solid #dee2e6', textAlign: 'center', color: '#6c757d', fontWeight: '500' }}>{time}</td>
               {daysOfWeek.map((day, dayIndex) => {
-                const slot = `${dayIndex}-${timeIndex}`;
-                const isSelected = selectedSlots.includes(slot);
+                const selectedSlot = `${dayIndex}-${timeIndex}`;
+                const isSelected = selectedSlots.includes(selectedSlot);
                 const isDisabled = isSlotDisabled(dayIndex, timeIndex);
                 return (
                   <td
-                    key={slot}
+                    key={selectedSlot}
                     style={{
                       padding: '12px',
                       border: '1px solid #dee2e6',
