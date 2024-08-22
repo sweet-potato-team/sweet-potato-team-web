@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const navigate = useNavigate() //轉址登入後進到後台
+  const navigate = useNavigate();
 
   const [data, setData] = useState({
     email: '',   
@@ -14,102 +14,128 @@ function Login() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setData({ ...data, [name]: value });
-    console.log(data);
   };
 
-  //api的發送
   const submit = async (e) => {
-    e.preventDefault();  // 避免表單的默認提交行為
-    console.log('Sending login request with data:', data);
+    e.preventDefault();
     try {
       const res = await axios.post('http://localhost:8080/users/login', data);
-      console.log('Login response:', res.data);
-      
       const { token } = res.data;
       document.cookie = `hexToken=${token}; expires=${new Date(new Date().getTime() + 3600 * 1000).toUTCString()};`;
   
       if (res.data.success) {
-        console.log('Login successful, navigating to /admin/spaces');
         navigate('/admin/spaces');
       } else {
-        console.log('Login failed, no navigation');
+        setLoginState({ message: '登入失敗，請重試。' });
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setLoginState(error.response.data);
+      setLoginState(error.response?.data || { message: '登入時發生錯誤，請稍後再試。' });
     }
   };
-  
-  
 
   return (
-    <div
+    <div 
+      className="d-flex flex-column justify-content-center align-items-center vh-100"
       style={{
-        backgroundImage: "url('https://plus.unsplash.com/premium_photo-1665203421659-09089ede4ffa?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-        backgroundBlendMode: 'overlay', // 背景混合模式
-        height: '100vh', // 高度设置为100vh以填充整个网页
-        display: 'flex',
-        margin: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
+        position: 'relative', // Added to position the ::before element
+        overflow: 'hidden',   // Ensures the blur effect does not exceed the boundaries
+        height: '100vh',
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
       }}
     >
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          
+          backgroundImage: 'url(https://i.imgur.com/UWWokJe.jpeg)',  // 公告欄
+          // backgroundImage: "url(https://i.imgur.com/FYmOyAO.jpeg)", // 水藍色電腦
+          // backgroundImage: "url(https://i.imgur.com/bJLTkPj.jpeg)",  // 有鋼筆
+
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(2px)', // Apply blur effect to the background image
+          zIndex: -1,
+        }}
+      />
+
+
       <div
-        className='p-4'
+        className='p-5'
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '15px',
-          width: '400px', // 固定宽度以确保元素居中
+          width: '500px',
           textAlign: 'center',
         }}
       >
-        <h2 className="fw-bold">管理員帳號登入帳號</h2>
+        <h2 className="fw-bold" style={{ fontSize: '2.5rem', color: '#415A77', marginBottom: '40px' }}>
+          管理員帳號登入
+        </h2>
 
         <div
           className={`alert alert-danger ${loginState.message ? 'd-block' : 'd-none'}`}
           role='alert'
+          style={{ fontSize: '1rem', color: '#AC6A6A', marginBottom: '20px' }}
         >
           {loginState.message}
         </div>
-        <div className='mb-3'>
-          <label htmlFor='email' className='form-label w-100' style={{textAlign:'left'}}>
+
+        <div className='mb-4 d-flex align-items-center'>
+          <label htmlFor='email' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#415A77', marginRight: '10px', width: '80px' }}>
             帳號：
-            <input
-              id='email'
-              className='form-control'
-              name='email'  // 確保這裡的 name 是 email
-              type='email'
-              placeholder='請輸入帳號'
-              onChange={handleChange}
-              style={{ width: '100%' }}
-            />
           </label>
+          <input
+            id='email'
+            className='form-control'
+            name='email'
+            type='email'
+            placeholder='請輸入帳號'
+            onChange={handleChange}
+            style={{ flex: 1, padding: '10px', fontSize: '1rem' }}
+          />
         </div>
-        <div className='mb-3'>
-          <label htmlFor='password' className='form-label w-100' style={{textAlign:'left'}}>
+        <div className='mb-5 d-flex align-items-center'>
+          <label htmlFor='password' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#415A77', marginRight: '10px', width: '80px' }}>
             密碼：
-            <input
-              type='password'
-              className='form-control'
-              name='password'
-              id='password'
-              placeholder='請輸入密碼'
-              onChange={handleChange}
-              style={{ width: '100%' }}
-            />
           </label>
+          <input
+            type='password'
+            className='form-control'
+            name='password'
+            id='password'
+            placeholder='請輸入密碼'
+            onChange={handleChange}
+            style={{ flex: 1, padding: '10px', fontSize: '1rem' }}
+          />
         </div>
 
         <button
           type='button'
-          className='btn btn-primary'
+          className='btn'
           onClick={submit}
-          style={{ width: '100%' , fontSize: 'larger',  fontWeight: 'bold', color:'white'}} // 使按钮宽度填充整个表单
+          style={{
+            width: '100%',
+            fontSize: '1.3rem',
+            fontWeight: 'bold',
+            backgroundColor: '#6096BA',
+            color: 'white',
+            borderRadius: '10px',
+            padding: '12px',
+            transition: 'background-color 0.3s, color 0.3s',
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = '#6096BA';
+            e.target.style.color = 'white';
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = '#D3E9FF';
+            e.target.style.color = '#415A77';
+          }}
         >
           登入
         </button>

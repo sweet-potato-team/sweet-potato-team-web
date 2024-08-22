@@ -4,7 +4,7 @@ import {
   MessageContext,
   handleSuccessMessage,
   handleErrorMessage,
-} from '../store/messageStore';
+} from '../../store/messageStore';
 
 function DocumentModal({ closeDocumentModal, getDocuments, type, tempDocument }) {
   const initialData = useMemo(() => ({

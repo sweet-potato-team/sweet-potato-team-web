@@ -4,32 +4,15 @@ import {
   MessageContext,
   handleSuccessMessage,
   handleErrorMessage,
-} from '../store/messageStore';
+} from '../../store/messageStore';
 
 function ChargeModal({ closeChargeModal, getCharges, type, tempCharge }) {
-  // 定義一個內部使用的 InputField 元件
-  const InputField = ({ id, name, value, onChange, modified, label }) => (
-    <div className='form-group' style={{ marginBottom: '15px' }}>
-      <label htmlFor={id}>{label}</label>
-      <input 
-        type='number' 
-        id={id} 
-        name={name} 
-        value={value} 
-        onChange={onChange} 
-        className='form-control form-control-sm' 
-        style={{ color: modified ? '#AC6A6A' : 'initial' }} 
-      />
-    </div>
-  );
-
   const initialData = useMemo(() => ({
     chargeLevel: '', chargeCategory: '', paidSpaceId: '', chargeRentalFeeSpace: '', chargeRentalFeeClean: '', chargeRentalFeePermission: ''
   }), []);
   
   const [tempData, setTempData] = useState(initialData);
   const [modifiedFields, setModifiedFields] = useState({});
-
   const [, dispatch] = useContext(MessageContext);
 
   useEffect(() => {
@@ -44,15 +27,45 @@ function ChargeModal({ closeChargeModal, getCharges, type, tempCharge }) {
       setModifiedFields({});
     }
   }, [type, tempCharge, initialData]);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTempData((prevData) => ({ ...prevData, [name]: value }));
     setModifiedFields((prevFields) => ({ ...prevFields, [name]: true }));
   };
 
+  const validateInput = () => {
+    for (const [key, value] of Object.entries(tempData)) {
+      if (key !== 'paidSpaceId' && (value === '' || isNaN(value))) {
+        return `欄位 ${key} 必須是數字且不能為空`;
+      }
+    }
+    return null;
+  };
+
+  const checkPaidSpaceIdExists = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/paid_spaces/${tempData.paidSpaceId}`);
+      return res.status === 200;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const submit = async () => {
     try {
+      const validationError = validateInput();
+      if (validationError) {
+        handleErrorMessage(dispatch, { response: { data: { message: validationError } } });
+        return;
+      }
+
+      const isPaidSpaceIdValid = await checkPaidSpaceIdExists();
+      if (!isPaidSpaceIdValid) {
+        handleErrorMessage(dispatch, { response: { data: { message: '付費空間ID不存在，請確認後再提交' } } });
+        return;
+      }
+
       const payload = {
         chargeLevel: tempData.chargeLevel, chargeCategory: tempData.chargeCategory, paidSpaceId: tempData.paidSpaceId,
         chargeRentalFeeSpace: tempData.chargeRentalFeeSpace, chargeRentalFeeClean: tempData.chargeRentalFeeClean, chargeRentalFeePermission: tempData.chargeRentalFeePermission
@@ -90,14 +103,32 @@ function ChargeModal({ closeChargeModal, getCharges, type, tempCharge }) {
           <div className='modal-body' style={{ padding: '20px' }}>
             <div className='row'>
               <div className='col-6'>
-                <InputField id='chargeLevel' name='chargeLevel' value={tempData.chargeLevel} onChange={handleChange} modified={modifiedFields.chargeLevel} label='收費等級' />
-                <InputField id='chargeCategory' name='chargeCategory' value={tempData.chargeCategory} onChange={handleChange} modified={modifiedFields.chargeCategory} label='收費類別' />
-                <InputField id='paidSpaceId' name='paidSpaceId' value={tempData.paidSpaceId} onChange={handleChange} modified={modifiedFields.paidSpaceId} label='付費空間ID' />
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='chargeLevel'>收費等級</label>
+                  <input type='number' id='chargeLevel' name='chargeLevel' value={tempData.chargeLevel} onChange={handleChange} className='form-control' style={{ color: modifiedFields.chargeLevel ? '#AC6A6A' : 'initial' }} />
+                </div>
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='chargeCategory'>收費類別</label>
+                  <input type='number' id='chargeCategory' name='chargeCategory' value={tempData.chargeCategory} onChange={handleChange} className='form-control' style={{ color: modifiedFields.chargeCategory ? '#AC6A6A' : 'initial' }} />
+                </div>
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='paidSpaceId'>付費空間ID</label>
+                  <input type='number' id='paidSpaceId' name='paidSpaceId' value={tempData.paidSpaceId} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceId ? '#AC6A6A' : 'initial' }} />
+                </div>
               </div>
               <div className='col-6'>
-                <InputField id='chargeRentalFeeSpace' name='chargeRentalFeeSpace' value={tempData.chargeRentalFeeSpace} onChange={handleChange} modified={modifiedFields.chargeRentalFeeSpace} label='場地費' />
-                <InputField id='chargeRentalFeeClean' name='chargeRentalFeeClean' value={tempData.chargeRentalFeeClean} onChange={handleChange} modified={modifiedFields.chargeRentalFeeClean} label='清潔費' />
-                <InputField id='chargeRentalFeePermission' name='chargeRentalFeePermission' value={tempData.chargeRentalFeePermission} onChange={handleChange} modified={modifiedFields.chargeRentalFeePermission} label='保證金' />
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='chargeRentalFeeSpace'>場地費</label>
+                  <input type='number' id='chargeRentalFeeSpace' name='chargeRentalFeeSpace' value={tempData.chargeRentalFeeSpace} onChange={handleChange} className='form-control' style={{ color: modifiedFields.chargeRentalFeeSpace ? '#AC6A6A' : 'initial' }} />
+                </div>
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='chargeRentalFeeClean'>清潔費</label>
+                  <input type='number' id='chargeRentalFeeClean' name='chargeRentalFeeClean' value={tempData.chargeRentalFeeClean} onChange={handleChange} className='form-control' style={{ color: modifiedFields.chargeRentalFeeClean ? '#AC6A6A' : 'initial' }} />
+                </div>
+                <div className='form-group' style={{ marginBottom: '15px' }}>
+                  <label htmlFor='chargeRentalFeePermission'>保證金</label>
+                  <input type='number' id='chargeRentalFeePermission' name='chargeRentalFeePermission' value={tempData.chargeRentalFeePermission} onChange={handleChange} className='form-control' style={{ color: modifiedFields.chargeRentalFeePermission ? '#AC6A6A' : 'initial' }} />
+                </div>
               </div>
             </div>
             <div className="mt-4">

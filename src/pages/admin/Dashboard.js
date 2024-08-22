@@ -79,7 +79,7 @@ function Dashboard() {
             </button>
             {!isCollapsed && (
               <div className="text-center mt-3">
-                <small className="text-muted">&copy; Potato team 🍠</small>
+                <small className="text-muted">&copy; Sweet Potato 🍠</small>
               </div>
             )}
           </div>

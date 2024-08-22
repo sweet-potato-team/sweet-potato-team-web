@@ -25,11 +25,20 @@ export const messageReducer = (state, action) => {
   }
 }
 
-export function handleSuccessMessage(dispatch, message) {
+export function handleSuccessMessage(dispatch, title, text) {
   dispatch({
-    type: 'SUCCESS',
-    message: message || 'Operation successful',
+    type: 'POST_MESSAGE',
+    payload: {
+      type: 'success',
+      title: title || '成功',
+      text: text || '操作成功',
+    },
   });
+  setTimeout(() => {
+    dispatch({
+      type: 'CLEAR_MESSAGE',
+    });
+  }, 3000);
 }
 
 

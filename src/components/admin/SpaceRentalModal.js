@@ -4,15 +4,15 @@ import {
   MessageContext,
   handleSuccessMessage,
   handleErrorMessage,
-} from '../store/messageStore';
+} from '../../store/messageStore';
 
 function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental }) {
   const initialData = useMemo(() => ({
     free_space_id: '',  // 空间编号
     space_rental_unit: '',
     space_rental_location: '',  // 申请地点
-    space_rental_date_time: '',
-    space_rental_date_time_count: '',
+    space_rental_date_start: '', // 租借起始时间
+    space_rental_date_end: '', // 租借结束时间
     space_rental_phone: '',
     space_rental_email: '',
     space_rental_reason: '',
@@ -50,8 +50,8 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
         free_space_id: tempRental.freeSpaceId || '',
         space_rental_unit: tempRental.spaceRentalUnit || '',
         space_rental_location: selectedLocation ? selectedLocation.freeSpaceName : '',
-        space_rental_date_time: tempRental.spaceRentalDateTime || '',
-        space_rental_date_time_count: tempRental.spaceRentalDateTimeCount || '',
+        space_rental_date_start: tempRental.spaceRentalDateStart || '',
+        space_rental_date_end: tempRental.spaceRentalDateEnd || '',
         space_rental_phone: tempRental.spaceRentalPhone || '',
         space_rental_email: tempRental.spaceRentalEmail || '',
         space_rental_reason: tempRental.spaceRentalReason || '',
@@ -97,8 +97,8 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
       { key: 'free_space_id', label: '空間編號' },
       { key: 'space_rental_unit', label: '申請單位' },
       { key: 'space_rental_location', label: '申請地點' },
-      { key: 'space_rental_date_time', label: '申請時間' },
-      { key: 'space_rental_date_time_count', label: '申請時數' },
+      { key: 'space_rental_date_start', label: '租借起始時間' },
+      { key: 'space_rental_date_end', label: '租借結束時間' },
       { key: 'space_rental_phone', label: '聯絡電話' },
       { key: 'space_rental_email', label: '電子郵件' },
       { key: 'space_rental_reason', label: '申請理由' },
@@ -107,49 +107,75 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
 
     for (let field of requiredFields) {
       if (!tempData[field.key]) {
-        alert(`錯誤：${field.label}尚未被填寫`);
+        handleErrorMessage(dispatch, {
+          response: { data: { message: `欄位 【${field.label}】 不能為空` } }
+        });
         return false;
       }
     }
 
     if (type === 'create' && !tempData.space_rental_agree) {
-      alert('錯誤：請確認使用者同意使用規則');
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '請確認使用者同意使用規則' } }
+      });
       return false;
     }
 
     return true;
   };
+  const handleTimeValidation = () => {
+    const startTime = new Date(tempData.space_rental_date_start);
+    const endTime = new Date(tempData.space_rental_date_end);
+  
+    // 檢查結束時間是否晚於開始時間
+    if (endTime <= startTime) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '結束時間必須晚於開始時間' } }
+      });
+      return false;
+    }
+  
+    // 檢查分鐘是否為00或30
+    const startMinutes = startTime.getMinutes();
+    const endMinutes = endTime.getMinutes();
+  
+    if (![0, 30].includes(startMinutes) || ![0, 30].includes(endMinutes)) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '時間必須為30分鐘、1小時為單位' } }
+      });
+      return false;
+    }
+  
+    return true;
+  };
 
+  
   const submit = async () => {
-    if (!validateFields()) {
+    if (!validateFields() || !handleTimeValidation()) {
       return;
     }
-
+  
     try {
       const payload = {
         freeSpaceId: tempData.free_space_id,
         spaceRentalUnit: tempData.space_rental_unit,
-        spaceRentalDateTime: tempData.space_rental_date_time,
-        spaceRentalDateTimeCount: tempData.space_rental_date_time_count,
+        spaceRentalDateStart: tempData.space_rental_date_start.replace(' ', 'T'),
+        spaceRentalDateEnd: tempData.space_rental_date_end.replace(' ', 'T'),
         spaceRentalPhone: tempData.space_rental_phone,
         spaceRentalEmail: tempData.space_rental_email,
         spaceRentalReason: tempData.space_rental_reason,
         spaceRentalRenter: tempData.space_rental_renter,
         spaceRentalAgree: tempData.space_rental_agree ? 1 : 0,
-        spaceRentalSuccess: 0, // 初始状态为未通过
+        spaceRentalSuccess: 0, // 初始狀態為未通過
       };
   
-      console.log('Payload:', payload);
+      const api = type === 'edit' && tempRental.spaceRentalId
+        ? `http://localhost:8080/space_rentals/${tempRental.spaceRentalId}`
+        : 'http://localhost:8080/space_rentals';
   
-      let api = `http://localhost:8080/space_rentals`;
-      let method = 'post';
+      const method = type === 'edit' ? 'put' : 'post';
   
-      if (type === 'edit' && tempRental.spaceRentalId) {
-        api = `http://localhost:8080/space_rentals/${tempRental.spaceRentalId}`;
-        method = 'put';
-      }
-  
-      const res = await axios({
+      await axios({
         method: method,
         url: api,
         headers: {
@@ -158,9 +184,15 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
         data: payload,
       });
   
-      handleSuccessMessage(dispatch, res);
-      closeRentalModal();
-      getSpaceRentals();
+      if (type === 'create') {
+        handleSuccessMessage(dispatch, '創建成功', '創建 新的一筆付費空間 成功');
+      } else if (type === 'edit') {
+        handleSuccessMessage(dispatch, '更新成功', `編輯編號為 ${tempData.free_space_id} 的空間成功`);
+      }
+      
+      closeRentalModal(); // 成功訊息後立即關閉視窗
+      getSpaceRentals(); // 刷新租借列表
+  
     } catch (error) {
       console.error('API Error:', error);
       handleErrorMessage(dispatch, error);
@@ -168,7 +200,7 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
   };
 
   return (
-    <div className='modal fade' tabIndex='-1' id='rentalModal' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+    <div className='modal fade' id='rentalModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
       <div className='modal-dialog modal-lg'>
         <div className='modal-content'>
           <div className='modal-header' style={{ backgroundColor: '#D3E9FF', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 20px' }}>
@@ -177,11 +209,10 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
             </h1>
             <button type='button' className='btn-close' aria-label='Close' onClick={closeRentalModal} style={{ marginLeft: 'auto' }} />
           </div>
-
           <div className='modal-body' style={{ padding: '20px' }}>
             <table className="table" style={{ borderSpacing: '10px' }}>
               <tbody>
-                {/* 联系信息 */}
+                {/* 聯絡資訊 */}
                 <tr>
                   <th colSpan="2" style={{ backgroundColor: '#D3E9FF', padding: '10px', fontSize: '18px', textAlign: 'center', marginBottom: '10px' }}>聯絡資訊</th>
                 </tr>
@@ -230,12 +261,12 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
                 <tr>
                   <td style={{ padding: '30px' }}>
                     <div className='form-group'>
-                      <label htmlFor='space_rental_date_time'>申請時間</label>
-                      <input type='text' id='space_rental_date_time' name='space_rental_date_time' value={tempData.space_rental_date_time || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.space_rental_date_time ? '#AC6A6A' : 'initial' }} />
+                      <label htmlFor='space_rental_date_start'>租借起始  <span style={{ fontSize: '12px', color: '#888' }}>( 以30分鐘、1小時為單位 )</span></label>
+                      <input type='datetime-local' id='space_rental_date_start' name='space_rental_date_start' value={tempData.space_rental_date_start || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.space_rental_date_start ? '#AC6A6A' : 'initial' }} />
                     </div>
                     <div className='form-group' style={{ marginTop: '10px' }}>
-                      <label htmlFor='space_rental_date_time_count'>申請時數</label>
-                      <input type='text' id='space_rental_date_time_count' name='space_rental_date_time_count' value={tempData.space_rental_date_time_count || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.space_rental_date_time_count ? '#AC6A6A' : 'initial' }} />
+                      <label htmlFor='space_rental_date_end'>租借結束  <span style={{ fontSize: '12px', color: '#888' }}>( 以30分鐘、1小時為單位 )</span></label>
+                      <input type='datetime-local' id='space_rental_date_end' name='space_rental_date_end' value={tempData.space_rental_date_end || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.space_rental_date_end ? '#AC6A6A' : 'initial' }} />
                     </div>
                   </td>
                   <td style={{ padding: '30px', verticalAlign: 'top' }}>

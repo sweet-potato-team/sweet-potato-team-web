@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Step1 from './RentalSteps/Step1';
 import Step2 from './RentalSteps/Step2';
 import Step3 from './RentalSteps/Step3';
@@ -10,15 +8,14 @@ import axios from 'axios';
 function SpaceRental({ space, handleClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [rentalData, setRentalData] = useState({
-    spaceRentalUnit: '', // 申請單位
-    freeSpaceName: space.freeSpaceName, // 空間名稱
-    freeSpaceId: space.freeSpaceId, // 空間 ID
-    spaceRentalDateTime: '', // 申請時間
-    spaceRentalDateTimeCount: '', // 申請時數
-    spaceRentalPhone: '', // 聯絡電話
-    spaceRentalEmail: '', // 電子郵件
-    spaceRentalReason: '', // 申請理由
-    spaceRentalRenter: '' // 申請人
+      spaceRentalUnit: '', // 申請單位
+      freeSpaceId: space.freeSpaceId, // 空間 ID
+      spaceRentalDateStart: '', // 申請開始日期
+      spaceRentalDateEnd: '', // 申請結束日期
+      spaceRentalPhone: '', // 聯絡電話
+      spaceRentalEmail: '', // 電子郵件
+      spaceRentalReason: '', // 申請理由
+      spaceRentalRenter: '' // 申請人
   });
   const [showWarning, setShowWarning] = useState(true);
 
@@ -43,22 +40,28 @@ function SpaceRental({ space, handleClose }) {
 
   const handleConfirm = async () => {
     console.log('Submitting Rental Data:', rentalData);
+  
     try {
-      const response = await axios.post('http://localhost:8080/space_rentals', {
-        spaceRentalUnit: rentalData.spaceRentalUnit,
-        freeSpaceName: rentalData.freeSpaceName,
-        freeSpaceId: rentalData.freeSpaceId,
-        spaceRentalDateTime: rentalData.spaceRentalDateTime,
-        spaceRentalDateTimeCount: rentalData.spaceRentalDateTimeCount,
-        spaceRentalPhone: rentalData.spaceRentalPhone,
-        spaceRentalEmail: rentalData.spaceRentalEmail,
-        spaceRentalReason: rentalData.spaceRentalReason,
-        spaceRentalRenter: rentalData.spaceRentalRenter,
-      });
-  
-      console.log('POST response:', response.data);
-  
-      const emailBody = `
+        const response = await axios.post('http://localhost:8080/space_rentals', {
+            freeSpaceId: rentalData.freeSpaceId,
+            spaceRentalUnit: rentalData.spaceRentalUnit,
+            spaceRentalDateStart: rentalData.spaceRentalDateStart,
+            spaceRentalDateEnd: rentalData.spaceRentalDateEnd,
+            spaceRentalPhone: rentalData.spaceRentalPhone,
+            spaceRentalEmail: rentalData.spaceRentalEmail,
+            spaceRentalReason: rentalData.spaceRentalReason,
+            spaceRentalRenter: rentalData.spaceRentalRenter,
+            spaceRentalAgree: 1, // 假設使用者已同意規則，設為1
+            spaceRentalSuccess: 0 // 初始狀態為未通過，設為0
+        });
+
+        console.log('POST response:', response.data);
+
+        // 格式化日期時間去掉 'T'
+        const formattedStartDate = rentalData.spaceRentalDateStart.replace('T', ' ');
+        const formattedEndDate = rentalData.spaceRentalDateEnd.replace('T', ' ');
+
+        const emailBody = `
         <html lang="zh-TW">
         <head>
           <meta charset="UTF-8">
@@ -125,7 +128,7 @@ function SpaceRental({ space, handleClose }) {
             .centered-box {
               display: block;
               margin: 20px auto;
-              padding: 20px;
+              padding: 15 20px;
               border: 2px solid #333;
               border-radius: 10px;
               background-color: #f9f9f9;
@@ -149,25 +152,25 @@ function SpaceRental({ space, handleClose }) {
                 <ul>
                   <li><strong>申請場地： </strong> ${rentalData.freeSpaceName}</li>                
                   <li><strong>申請單位： </strong> ${rentalData.spaceRentalUnit}</li>
-                  <li><strong>租借日期與時間： </strong> ${rentalData.spaceRentalDateTime}</li>
+                  <li><strong>申請開始日期： </strong> ${formattedStartDate}</li>
+                  <li><strong>申請結束日期： </strong> ${formattedEndDate}</li>
                   <li><strong>聯絡電話： </strong> ${rentalData.spaceRentalPhone}</li>
                   <li><strong>租借事由： </strong> ${rentalData.spaceRentalReason}</li>
                 </ul>
               </div>
-              <p>請再次確認上表內容無誤，我們會盡快審核您的申請，</p>
+              <p>請再次確認上表內容無誤，我們會盡快審核您的申請</p>
               <p>如有任何問題，請隨時與我們聯繫。</p>
             </div>
             <div class="email-footer">
               <p>32001 桃園市中壢區中大路300號</p>
               <p>(03)490-8851</p>
-              <p>(03)490-0488</p>
-              <p>(03)420-0697</p>
+              <p>(03)490-0488)</p>
+              <p>(03)420-0697)</p>
               <p>中央大學總機電話: (03)422-7151 校內分機:27086~27089 傳真: (03)420-5604</p>
             </div>
           </div>
         </body>
         </html>
-
       `;
   
       await axios.post('http://localhost:8080/sendEmail', {
@@ -183,7 +186,6 @@ function SpaceRental({ space, handleClose }) {
       console.error('POST error:', error);
     }
   };
-  
 
   const handleWarningConfirm = () => {
     setShowWarning(false);

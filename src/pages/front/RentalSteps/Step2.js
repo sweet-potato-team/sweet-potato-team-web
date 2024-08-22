@@ -59,6 +59,10 @@ function Step2({ nextStep, prevStep, handleChange, rentalData }) {
     color: '#fff',
   };
 
+  // 處理顯示時間，去掉 'T'
+  const displayStartDate = rentalData.spaceRentalDateStart.replace('T', ' ');
+  const displayEndDate = rentalData.spaceRentalDateEnd.replace('T', ' ');
+
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>填寫資料</h2>
@@ -72,8 +76,12 @@ function Step2({ nextStep, prevStep, handleChange, rentalData }) {
           <input type="text" style={inputStyle} value={rentalData.freeSpaceName} readOnly />
         </label>
         <label style={labelStyle}>
-          借用日期與時段：
-          <input type="text" style={inputStyle} value={rentalData.spaceRentalDateTime} readOnly />
+          申請開始日期：
+          <input type="text" style={inputStyle} value={displayStartDate} readOnly />
+        </label>
+        <label style={labelStyle}>
+          申請結束日期：
+          <input type="text" style={inputStyle} value={displayEndDate} readOnly />
         </label>
         <label style={labelStyle}>
           連絡電話：

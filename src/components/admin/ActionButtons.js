@@ -31,9 +31,11 @@ function ActionButtons({ onCreateClick, onCollapseClick, onSearchSubmit, onSelec
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (onSearchSubmit) {
+      console.log('Search Text:', searchText); // 添加 console.log 以檢查 searchText
       onSearchSubmit(searchText);
     }
   };
+  
 
   return (
     <div className='d-flex justify-content-between align-items-center'>

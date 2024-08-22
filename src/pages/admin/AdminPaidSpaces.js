@@ -1,10 +1,10 @@
 // AdminSpaces.js
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import axios from "axios";
-import SpaceModal from "../../components/SpaceModal";
+import SpaceModal from "../../components/admin/SpaceModal";
 import Pagination from "../../components/Pagination";
 import { Modal } from "bootstrap";
-import ActionButtons from "../../components/ActionButtons";
+import ActionButtons from "../../components/admin/ActionButtons";
 
 function AdminSpaces() {
   const [spaces, setSpaces] = useState([]);

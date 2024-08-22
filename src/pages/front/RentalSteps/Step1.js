@@ -6,13 +6,11 @@ function Step1({ nextStep, setRentalData, spaceName }) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [startSlot, setStartSlot] = useState(null);
 
-  // 定義一週的天數
   const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const today = new Date();
   const startDate = new Date();
-  startDate.setDate(startDate.getDate() - startDate.getDay() + currentWeek * 7); // 計算當前顯示的週
+  startDate.setDate(startDate.getDate() - startDate.getDay() + currentWeek * 7);
 
-  // 定義可選擇的時間段
   const times = [
     '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
     '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00',
@@ -20,7 +18,6 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     '20:00-21:00', '21:00-22:00'
   ];
 
-  // 當使用者按下滑鼠開始選擇時間段
   const handleSlotMouseDown = (dayIndex, timeIndex) => {
     if (isSlotDisabled(dayIndex, timeIndex)) return;
     setIsSelecting(true);
@@ -29,9 +26,8 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     setSelectedSlots([selectedSlot]);
   };
 
-  // 當使用者拖動滑鼠來選擇時間段
   const handleSlotMouseOver = (dayIndex, timeIndex) => {
-    if (!isSelecting || !startSlot || startSlot.dayIndex !== dayIndex || isSlotDisabled(dayIndex, timeIndex)) return; // 禁止跨天選擇或選擇禁用的時間格
+    if (!isSelecting || !startSlot || startSlot.dayIndex !== dayIndex || isSlotDisabled(dayIndex, timeIndex)) return;
     const selectedSlot = `${dayIndex}-${timeIndex}`;
     if (!selectedSlots.includes(selectedSlot)) {
       const newSlots = generateSlots(startSlot.timeIndex, timeIndex, dayIndex);
@@ -39,13 +35,11 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     }
   };
 
-  // 當使用者釋放滑鼠按鍵後停止選擇
   const handleSlotMouseUp = () => {
     setIsSelecting(false);
     setStartSlot(null);
   };
 
-  // 生成選中的時間段
   const generateSlots = (start, end, dayIndex) => {
     const range = start <= end ? [start, end] : [end, start];
     const newSlots = [];
@@ -57,84 +51,65 @@ function Step1({ nextStep, setRentalData, spaceName }) {
     return newSlots;
   };
 
-  // 判斷時間格是否禁用
   const isSlotDisabled = (dayIndex, timeIndex) => {
     const slotDate = new Date(startDate);
     slotDate.setDate(slotDate.getDate() + dayIndex);
     const [startHour] = times[timeIndex].split('-')[0].split(':');
     slotDate.setHours(startHour);
 
-    return slotDate < today; // 如果時間格早於今天則禁用
+    return slotDate < today;
   };
 
-  // 確認選擇的時間並進行下一步
   const handleConfirm = () => {
-    const selectedDates = [];
-    let lastDayIndex = null;
-    let lastTimeIndex = null;
-    let startSlot = null;
-    let totalHours = 0;
-
-    selectedSlots.forEach(selectedSlot => {
+    let startDateTime = null;
+    let endDateTime = null;
+  
+    selectedSlots.forEach((selectedSlot, index) => {
       const [dayIndex, timeIndex] = selectedSlot.split('-').map(Number);
-      totalHours += 1; // 每選擇一個時間段，累計一個小時
-
-      if (lastDayIndex === dayIndex && lastTimeIndex !== null && timeIndex === lastTimeIndex + 1) {
-        lastTimeIndex = timeIndex;
-      } else {
-        if (startSlot) {
-          selectedDates.push(formatSlot(startSlot, lastDayIndex, lastTimeIndex));
-        }
-        startSlot = { dayIndex, timeIndex };
-        lastDayIndex = dayIndex;
-        lastTimeIndex = timeIndex;
+      const slotDate = new Date(startDate);
+      slotDate.setUTCDate(slotDate.getUTCDate() + dayIndex);
+  
+      const [startHour, startMinute] = times[timeIndex].split('-')[0].split(':');
+      const [endHour, endMinute] = times[timeIndex].split('-')[1].split(':');
+  
+      if (index === 0) {
+        slotDate.setUTCHours(startHour, startMinute, 0);
+        startDateTime = new Date(slotDate);
+      }
+  
+      if (index === selectedSlots.length - 1) {
+        slotDate.setUTCHours(endHour, endMinute, 0);
+        endDateTime = new Date(slotDate);
       }
     });
-
-    if (startSlot) {
-      selectedDates.push(formatSlot(startSlot, lastDayIndex, lastTimeIndex));
-    }
-
-    setRentalData(prevData => ({
+  
+    const formattedStartDateTime = startDateTime.toISOString().slice(0, 16); // 格式化為 "yyyy-MM-dd'T'HH:mm"
+    const formattedEndDateTime = endDateTime.toISOString().slice(0, 16); // 格式化為 "yyyy-MM-dd'T'HH:mm"
+  
+    setRentalData((prevData) => ({
       ...prevData,
-      spaceRentalDateTime: selectedDates.join(', '),
-      spaceRentalDateTimeCount: totalHours, // 記錄總共選擇了多少小時
-      freeSpaceName: spaceName  // 將選擇的空間名稱存入租借數據
+      spaceRentalDateStart: formattedStartDateTime,
+      spaceRentalDateEnd: formattedEndDateTime,
+      freeSpaceName: spaceName,
     }));
+  
     nextStep();
   };
 
-  // 格式化時間段為輸出格式
-  const formatSlot = (startSlot, dayIndex, endSlot) => {
-    const start = new Date(startDate);
-    start.setDate(start.getDate() + startSlot.dayIndex);
-
-    const end = new Date(startDate);
-    end.setDate(end.getDate() + dayIndex);
-
-    const startTime = times[startSlot.timeIndex].split('-')[0];
-    const endTime = times[endSlot].split('-')[1];
-
-    return `${daysOfWeek[dayIndex]} (${end.getMonth() + 1}/${end.getDate()}) ${startTime}-${endTime}`;
-  };
-
-  // 切換顯示的週
   const handleWeekChange = (direction) => {
     setCurrentWeek(currentWeek + direction);
-    setSelectedSlots([]); // 切換周時清空選擇
+    setSelectedSlots([]);
   };
 
-  // 跳回到當前的這周
   const handleJumpToCurrentWeek = () => {
     setCurrentWeek(0);
-    setSelectedSlots([]); // 回到當前周時清空選擇
+    setSelectedSlots([]);
   };
 
   return (
     <div style={{ padding: '2rem', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)', userSelect: 'none', maxWidth: '900px', margin: 'auto', position: 'relative' }}>
       <h2 style={{ fontSize: '1.75rem', marginBottom: '1.5rem', color: '#495057', textAlign: 'center' }}>選擇時間</h2>
       
-      {/* "回到這周" 按鈕放置在右上角 */}
       <button onClick={handleJumpToCurrentWeek} style={{ position: 'absolute', top: '20px', right: '20px', padding: '0.5rem 1rem', fontSize: '1rem', borderRadius: '8px', cursor: 'pointer', backgroundColor: '#28a745', color: '#fff', border: 'none', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         回到本周
       </button>

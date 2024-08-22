@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import axios from "axios";
-import DocumentModal from "../../components/DocumentModal";
+import DocumentModal from "../../components/admin/DocumentModal";
 import Pagination from "../../components/Pagination";
-import ActionButtonsRentals from "../../components/ActionButtonsRentals";
+import ActionButtonsRentals from "../../components/admin/ActionButtonsRentals";
 import { Modal } from "bootstrap";
+import DeleteModal from "../../components/DeleteModal"; // 引入DeleteModal组件
+
 
 function AdminManageDocuments() {
   const [documents, setDocuments] = useState([]);
@@ -19,6 +21,7 @@ function AdminManageDocuments() {
   const [filter, setFilter] = useState({ key: '', value: '' });
 
   const documentModal = useRef(null);
+
 
   const getDocuments = useCallback(async () => {
     try {
@@ -56,8 +59,32 @@ function AdminManageDocuments() {
     }
   }, [pagination.limit, pagination.offset, filter]);
   
+  // 刪除處理 - 開始
   
+  const [selectedDocumentId, setSelectedDocumentId] = useState(null); // 新增：用于存储要删除的文档ID
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // 新增：控制DeleteModal的显示
 
+  const openDeleteModal = (documentId) => {
+    setSelectedDocumentId(documentId);
+    setShowDeleteModal(true);
+  };
+  
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedDocumentId(null);
+  };
+  
+  const handleDelete = async (documentId) => {
+    try {
+      await axios.delete(`http://localhost:8080/manage_documents/${documentId}`);
+      setDocuments((prevDocuments) => prevDocuments.filter(document => document.documentId !== documentId));
+      closeDeleteModal();
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
+  };
+    // 刪除處理 - 結束
+  
   useEffect(() => {
     documentModal.current = new Modal('#documentModal', { backdrop: 'static' });
     getDocuments();
@@ -95,17 +122,6 @@ function AdminManageDocuments() {
     { value: 'documentUrl', label: '網址' },
   ];
 
-  const deleteDocument = async (documentId) => {
-    if (window.confirm("確認刪除這一筆文件?")) {
-      try {
-        await axios.delete(`http://localhost:8080/manage_documents/${documentId}`);
-        setDocuments((prevDocuments) => prevDocuments.filter(document => document.documentId !== documentId));
-      } catch (error) {
-        console.error("Error deleting document:", error);
-      }
-    }
-  };
-
   return (
     <div className='p-3'>
       <DocumentModal
@@ -114,6 +130,16 @@ function AdminManageDocuments() {
         tempDocument={tempDocument}
         type={type}
       />
+  
+      {showDeleteModal && (
+        <DeleteModal
+          close={closeDeleteModal}
+          text="確認刪除這一筆文件?"
+          handleDelete={handleDelete}
+          id={selectedDocumentId}
+        />
+      )}
+  
       <div style={{ backgroundColor: '#D3E9FF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0', width: '100%', position: 'relative' }}>
         <hr style={{ margin: '0 auto', borderTop: '3px solid #D3E9FF', width: '100%' }} />
         <h3 style={{ textAlign: 'center', margin: '0' }}>
@@ -121,16 +147,16 @@ function AdminManageDocuments() {
         </h3>
         <hr style={{ margin: '0 auto', borderTop: '3px solid #D3E9FF', width: '100%' }} />
       </div>
-
+  
       <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-      <ActionButtonsRentals 
+        <ActionButtonsRentals 
           onCreateClick={() => openDocumentModal('create', {})}
           onSearchSubmit={handleSearchSubmit}
           onSelectChange={handleSelectChange}
           options={documentOptions}
         />
       </div>
-
+  
       <table className='table'>
         <thead>
           <tr>
@@ -141,7 +167,7 @@ function AdminManageDocuments() {
             <th scope='col' style={{ textAlign: 'center', backgroundColor: '#D3E9FF' }}>編輯</th>
           </tr>
         </thead>
-
+  
         <tbody>
           {documents.map((document) => (
             <tr key={document.documentId}>
@@ -155,7 +181,7 @@ function AdminManageDocuments() {
               <td style={{ textAlign: 'center' }}>{new Date(document.documentLastModifiedDate).toLocaleString()}</td>
               <td style={{ textAlign: 'center' }}>
                 <button type='button' className='btn btn-sm me-2' style={{ color: '#A4B6A4', padding: '5px 10px', border: '1px solid #A4B6A4', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => openDocumentModal('edit', document)}><i className="bi bi-feather"></i></button>
-                <button type='button' className='btn btn-sm' style={{ color: '#9B6A6A', padding: '5px 10px', border: '1px solid #AF9797', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => deleteDocument(document.documentId)}><i className="bi bi-trash3"></i></button>
+                <button type='button' className='btn btn-sm' style={{ color: '#9B6A6A', padding: '5px 10px', border: '1px solid #AF9797', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => openDeleteModal(document.documentId)}><i className="bi bi-trash3"></i></button>
               </td>
             </tr>
           ))}
@@ -164,6 +190,7 @@ function AdminManageDocuments() {
       <Pagination pagination={pagination} changePage={changePage} />
     </div>
   );
+  
 }
 
 export default AdminManageDocuments;

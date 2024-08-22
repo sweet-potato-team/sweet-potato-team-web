@@ -65,13 +65,16 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
     justifyContent: 'center',
   };
 
+  // 處理顯示時間，去掉 'T'
+  const displayStartDate = rentalData.spaceRentalDateStart.replace('T', ' ');
+  const displayEndDate = rentalData.spaceRentalDateEnd.replace('T', ' ');
+
   const handleConfirmAndNext = async () => {
     setIsSubmitting(true);
     try {
-      await handleConfirm(); // 激活 handleConfirm 函數
-      nextStep(); // POST成功後進入下一步
+      await handleConfirm(); // 提交資料
+      nextStep(); // 成功後進入下一步
     } catch (error) {
-      // 若有錯誤發生，可以在這裡處理，並將 isSubmitting 設回 false
       setIsSubmitting(false);
     }
   };
@@ -82,7 +85,8 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
       <div style={summaryStyle}>
         <p style={labelStyle}>申請單位: {rentalData.spaceRentalUnit}</p>
         <p style={labelStyle}>借用空間: {rentalData.freeSpaceName}</p>
-        <p style={labelStyle}>借用日期與時段: {rentalData.spaceRentalDateTime}</p>
+        <p style={labelStyle}>申請開始日期: {displayStartDate}</p>
+        <p style={labelStyle}>申請結束日期: {displayEndDate}</p>
         <p style={labelStyle}>連絡電話: {rentalData.spaceRentalPhone}</p>
         <p style={labelStyle}>電子郵件: {rentalData.spaceRentalEmail}</p>
         <p style={labelStyle}>借用事由: {rentalData.spaceRentalReason}</p>
@@ -96,7 +100,7 @@ function Step3({ nextStep, prevStep, rentalData, handleConfirm }) {
         <button
           style={confirmButtonStyle}
           onClick={handleConfirmAndNext}
-          disabled={isSubmitting} // 按鈕被禁用時不允許點擊
+          disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>

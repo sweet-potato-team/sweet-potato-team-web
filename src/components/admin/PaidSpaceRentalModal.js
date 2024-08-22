@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState, useMemo } from "react";
-import { MessageContext, handleSuccessMessage, handleErrorMessage } from '../store/messageStore';
+import { MessageContext, handleSuccessMessage, handleErrorMessage } from '../../store/messageStore';
 
 function PaidSpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental }) {
   const initialData = useMemo(() => ({
@@ -35,10 +35,9 @@ function PaidSpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRen
 
   const [tempData, setTempData] = useState(initialData);
   const [modifiedFields, setModifiedFields] = useState({});
-  const [locations, setLocations] = useState([]); // 用于存储申请地点选项
+  const [locations, setLocations] = useState([]);
   const [, dispatch] = useContext(MessageContext);
 
-  // 获取可用的地点列表
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -57,7 +56,6 @@ function PaidSpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRen
     fetchLocations();
   }, []);
 
-  // 设置初始数据
   useEffect(() => {
     if (type === 'edit' && tempRental) {
       const selectedLocation = locations.find(location => location.paidSpaceId === tempRental.paidSpaceId);
@@ -126,80 +124,123 @@ function PaidSpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRen
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    // 如果字段名稱是 'paidSpaceRentalUsers' 且值不是數字，則返回，阻止非数字输入
-    if (name === 'paidSpaceRentalUsers' && isNaN(value)) {
+
+    const numericFields = ['paidSpaceRentalPhone', 'paidSpaceRentalUsers', 'paidSpaceRentalFeeSpace', 'paidSpaceRentalFeeClean', 'paidSpaceRentalFeePermission', 'paidSpaceRentalFeeSpaceType'];
+    if (numericFields.includes(name) && isNaN(value)) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: `欄位 【${name}】 必須是數字` } }
+      });
       return;
     }
-  
-    // 更新 tempData 狀態，將空字符串設置為 null
+
     setTempData((prevData) => ({
       ...prevData,
       [name]: value === '' ? null : value,
     }));
-  
-    // 更新 modifiedFields 狀態，標記字段已被修改
     setModifiedFields((prevFields) => ({
       ...prevFields,
       [name]: true,
     }));
   };
 
-// 驗證欄位函數
-const validateFields = () => {
-  const requiredFields = [
-      'paidSpaceId', 'chargeId', 'paidSpaceRentalReason', 'paidSpaceRentalUsers',
-      'paidSpaceRentalActivityType', 'paidSpaceRentalUnitType', 'paidSpaceRentalUnit',
-      'paidSpaceRentalRenter', 'paidSpaceRentalPhone', 'paidSpaceRentalEmail',
-      'paidSpaceRentalDateTimeStart1', 'paidSpaceRentalDateTimeEnd1',
-      'paidSpaceRentalFeeSpace', 'paidSpaceRentalFeeClean', 'paidSpaceRentalFeePermission'
-  ];
+  const validateFields = () => {
+    const requiredFields = [
+      { key: 'paidSpaceId', label: '申請地點' },
+      { key: 'chargeId', label: '收費項目' },
+      { key: 'paidSpaceRentalReason', label: '申請理由' },
+      { key: 'paidSpaceRentalUsers', label: '使用人數' },
+      { key: 'paidSpaceRentalActivityType', label: '活動類型' },
+      { key: 'paidSpaceRentalUnitType', label: '單位類型' },
+      { key: 'paidSpaceRentalUnit', label: '申請單位' },
+      { key: 'paidSpaceRentalRenter', label: '申請人' },
+      { key: 'paidSpaceRentalPhone', label: '聯絡電話' },
+      { key: 'paidSpaceRentalEmail', label: '電子郵件' },
+      { key: 'paidSpaceRentalDateTimeStart1', label: '第一組起始時間' },
+      { key: 'paidSpaceRentalDateTimeEnd1', label: '第一組結束時間' },
+      { key: 'paidSpaceRentalFeeSpace', label: '場地費' },
+      { key: 'paidSpaceRentalFeeClean', label: '清潔費' },
+      { key: 'paidSpaceRentalFeePermission', label: '保證金' },
+    ];
 
-  let isValid = true;
-  requiredFields.forEach(field => {
-      const value = tempData[field];
-      if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {
-          handleErrorMessage(dispatch, `Error: The field ${field} is required and cannot be empty.`);
-          isValid = false;
+    for (let field of requiredFields) {
+      if (!tempData[field.key]) {
+        handleErrorMessage(dispatch, {
+          response: { data: { message: `欄位 【${field.label}】 不能為空` } }
+        });
+        return false;
       }
-  });
+    }
 
-  if (type === 'create' && !tempData.paidSpaceRentalAgree) {
-      handleErrorMessage(dispatch, '錯誤：請確認使用者同意使用【付費空間】規則');
-      isValid = false;
-  }
-
-  return isValid;
-};
-
-
-// 提交函數
-const submit = async () => {
-  if (!validateFields()) {
-      return;
-  }
-
-  const api = `http://localhost:8080/paid_space_rentals${type === 'edit' && tempRental.paidSpaceRentalId ? `/${tempRental.paidSpaceRentalId}` : ''}`;
-  const method = type === 'edit' ? 'put' : 'post';
-
-  try {
-      const response = await axios[method](api, tempData, {
-          headers: { 'Content-Type': 'application/json' },
+    if (type === 'create' && !tempData.paidSpaceRentalAgree) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '請確認使用者同意使用【付費空間】規則' } }
       });
+      return false;
+    }
 
+    return true;
+  };
+  const handleTimeValidation = () => {
+    const startTime = new Date(tempData.paidSpaceRentalDateTimeStart1);
+    const endTime = new Date(tempData.paidSpaceRentalDateTimeEnd1);
+  
+    // 檢查結束時間是否晚於開始時間
+    if (endTime <= startTime) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '結束時間必須晚於開始時間' } }
+      });
+      return false;
+    }
+  
+    // 檢查分鐘是否為00或30
+    const startMinutes = startTime.getMinutes();
+    const endMinutes = endTime.getMinutes();
+  
+    if (![0].includes(startMinutes) || ![0].includes(endMinutes)) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '時間必須為1小時為單位' } }
+      });
+      return false;
+    }
+  
+    return true;
+  };
+  
+
+  
+  const submit = async () => {
+    if (!validateFields() || !handleTimeValidation()) {
+      return;
+    }
+  
+    const api = `http://localhost:8080/paid_space_rentals${type === 'edit' && tempRental.paidSpaceRentalId ? `/${tempRental.paidSpaceRentalId}` : ''}`;
+    const method = type === 'edit' ? 'put' : 'post';
+  
+    try {
+      const response = await axios[method](api, tempData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
       if (response.status === 200 || response.status === 201) {
-          handleSuccessMessage(dispatch, `${type === 'edit' ? 'Updated' : 'Created'} successfully`);
-          closeRentalModal();
-          getSpaceRentals();
+        handleSuccessMessage(dispatch, type === 'edit' ? '更新成功' : '創建成功', type === 'edit' ? `編輯編號為 ${tempData.paidSpaceId} 的空間成功` : '創建 新的一筆付費空間 成功');
+        closeRentalModal();
+        getSpaceRentals();
       } else {
-          handleErrorMessage(dispatch, `Unexpected response status: ${response.status}`);
+        handleErrorMessage(dispatch, {
+          response: { data: { message: `Unexpected response status: ${response.status}` } }
+        });
       }
-  } catch (error) {
+    } catch (error) {
       console.error('API Error:', error);
       const errorMessage = error.response?.data?.message || `Failed to ${type === 'edit' ? 'update' : 'create'}`;
-      handleErrorMessage(dispatch, errorMessage);
-  }
-};
+      handleErrorMessage(dispatch, {
+        response: { data: { message: errorMessage } }
+      });
+    }
+  };
+
+  
+  
   return (
     <div className='modal fade' id='rentalModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
       <div className='modal-dialog modal-lg'>
@@ -246,6 +287,15 @@ const submit = async () => {
                   </td>
                   <td style={{ padding: '30px' }}>
                     <div className='form-group'>
+                        <label htmlFor='paidSpaceName'>申請地點</label>
+                        <select id='paidSpaceName' name='paidSpaceName' value={tempData.paidSpaceName || ''} onChange={handleLocationChange} className='form-control' style={{ color: modifiedFields.paidSpaceName ? '#AC6A6A' : 'initial' }}>
+                          <option value=''>選擇申請地點</option>
+                          {Array.isArray(locations) && locations.map((location) => (
+                            <option key={location.paidSpaceId} value={location.paidSpaceName}>{location.paidSpaceName}</option>
+                          ))}
+                        </select>
+                      </div>
+                    <div className='form-group'  style={{ marginTop: '20px' }}>
                       <label htmlFor='paidSpaceRentalReason'>申請理由</label>
                       <textarea id='paidSpaceRentalReason' name='paidSpaceRentalReason' className='form-control' onChange={handleChange} value={tempData.paidSpaceRentalReason || ''} style={{ height: '80px', color: modifiedFields.paidSpaceRentalReason ? '#AC6A6A' : 'initial' }} />
                     </div>
@@ -271,24 +321,6 @@ const submit = async () => {
                   </td>
                 </tr>
 
-                {/* 申請地點 */}
-                <tr>
-                  <th colSpan="2" style={{ backgroundColor: '#D3E9FF', padding: '10px', fontSize: '18px', textAlign: 'center', marginBottom: '10px' }}>申請地點</th>
-                </tr>
-                <tr>
-                  <td colSpan="2" style={{ padding: '30px' }}>
-                    <div className='form-group'>
-                      <label htmlFor='paidSpaceName'>申請地點</label>
-                      <select id='paidSpaceName' name='paidSpaceName' value={tempData.paidSpaceName || ''} onChange={handleLocationChange} className='form-control' style={{ color: modifiedFields.paidSpaceName ? '#AC6A6A' : 'initial' }}>
-                        <option value=''>選擇申請地點</option>
-                        {Array.isArray(locations) && locations.map((location) => (
-                          <option key={location.paidSpaceId} value={location.paidSpaceName}>{location.paidSpaceName}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </td>
-                </tr>
-
                 {/* 時間資訊 */}
                 <tr>
                   <th colSpan="2" style={{ backgroundColor: '#D3E9FF', padding: '10px', fontSize: '18px', textAlign: 'center', marginBottom: '10px' }}>時間資訊</th>
@@ -297,11 +329,11 @@ const submit = async () => {
                   <td style={{ padding: '30px' }}>
                     <div className='form-group'>
                       <label htmlFor='paidSpaceRentalDateTimeStart1'>第一組起始時間</label>
-                      <input type='text' id='paidSpaceRentalDateTimeStart1' name='paidSpaceRentalDateTimeStart1' value={tempData.paidSpaceRentalDateTimeStart1 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeStart1 ? '#AC6A6A' : 'initial' }} />
+                      <input type='datetime-local' id='paidSpaceRentalDateTimeStart1' name='paidSpaceRentalDateTimeStart1' value={tempData.paidSpaceRentalDateTimeStart1 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeStart1 ? '#AC6A6A' : 'initial' }} />
                     </div>
                     <div className='form-group' style={{ marginTop: '20px' }}>
                       <label htmlFor='paidSpaceRentalDateTimeEnd1'>第一組結束時間</label>
-                      <input type='text' id='paidSpaceRentalDateTimeEnd1' name='paidSpaceRentalDateTimeEnd1' value={tempData.paidSpaceRentalDateTimeEnd1 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeEnd1 ? '#AC6A6A' : 'initial' }} />
+                      <input type='datetime-local' id='paidSpaceRentalDateTimeEnd1' name='paidSpaceRentalDateTimeEnd1' value={tempData.paidSpaceRentalDateTimeEnd1 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeEnd1 ? '#AC6A6A' : 'initial' }} />
                     </div>
                     <div className='form-group' style={{ marginTop: '20px' }}>
                       <label htmlFor='paidSpaceRentalNote1'>備註1</label>
@@ -311,11 +343,11 @@ const submit = async () => {
                   <td style={{ padding: '30px' }}>
                     <div className='form-group'>
                       <label htmlFor='paidSpaceRentalDateTimeStart2'>第二組起始時間</label>
-                      <input type='text' id='paidSpaceRentalDateTimeStart2' name='paidSpaceRentalDateTimeStart2' value={tempData.paidSpaceRentalDateTimeStart2 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeStart2 ? '#AC6A6A' : 'initial' }} />
+                      <input type='datetime-local' id='paidSpaceRentalDateTimeStart2' name='paidSpaceRentalDateTimeStart2' value={tempData.paidSpaceRentalDateTimeStart2 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeStart2 ? '#AC6A6A' : 'initial' }} />
                     </div>
                     <div className='form-group' style={{ marginTop: '20px' }}>
                       <label htmlFor='paidSpaceRentalDateTimeEnd2'>第二組結束時間</label>
-                      <input type='text' id='paidSpaceRentalDateTimeEnd2' name='paidSpaceRentalDateTimeEnd2' value={tempData.paidSpaceRentalDateTimeEnd2 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeEnd2 ? '#AC6A6A' : 'initial' }} />
+                      <input type='datetime-local' id='paidSpaceRentalDateTimeEnd2' name='paidSpaceRentalDateTimeEnd2' value={tempData.paidSpaceRentalDateTimeEnd2 || ''} onChange={handleChange} className='form-control' style={{ color: modifiedFields.paidSpaceRentalDateTimeEnd2 ? '#AC6A6A' : 'initial' }} />
                     </div>
                     <div className='form-group' style={{ marginTop: '20px' }}>
                       <label htmlFor='paidSpaceRentalNote2'>備註2</label>
@@ -354,7 +386,14 @@ const submit = async () => {
                     </div>
                     {type === 'create' && (
                       <div className='form-group' style={{ marginTop: '20px' }}>
-                        <input type='checkbox' id='paidSpaceRentalAgree' name='paidSpaceRentalAgree' checked={tempData.paidSpaceRentalAgree === 1} onChange={handleChange} className='form-check-input' />
+                        <input 
+                          type='checkbox' 
+                          id='paidSpaceRentalAgree' 
+                          name='paidSpaceRentalAgree' 
+                          checked={tempData.paidSpaceRentalAgree === 1} 
+                          onChange={handleCheckboxChange}  
+                          className='form-check-input' 
+                        />
                         <label htmlFor='paidSpaceRentalAgree' style={{ marginLeft: '10px' }}>請確認使用者同意使用【付費空間】規則</label>
                       </div>
                     )}
@@ -374,3 +413,4 @@ const submit = async () => {
 }
 
 export default PaidSpaceRentalModal;
+

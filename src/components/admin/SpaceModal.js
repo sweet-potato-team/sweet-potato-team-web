@@ -4,7 +4,7 @@ import {
   MessageContext,
   handleSuccessMessage,
   handleErrorMessage,
-} from '../store/messageStore';
+} from '../../store/messageStore';
 
 function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
   const initialData = useMemo(() => ({
@@ -24,10 +24,10 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
     free_audio_input_available: 0,
     free_video_input_available: 0,
     free_facilities: '',
-    free_space_overview: '', // 添加了這一行
+    free_space_overview: '',
     free_is_active: 1,
   }), []);
-  
+
   const [tempData, setTempData] = useState(initialData);
   const [modifiedFields, setModifiedFields] = useState({});
 
@@ -52,7 +52,7 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
         free_audio_input_available: tempSpace.freeAudioInputAvailable === 1,
         free_video_input_available: tempSpace.freeVideoInputAvailable === 1,
         free_facilities: tempSpace.freeFacilities || '',
-        free_space_overview: tempSpace.freeSpaceOverview || '', // 添加了這一行
+        free_space_overview: tempSpace.freeSpaceOverview || '',
         free_is_active: tempSpace.freeIsActive === 1,
       });
       setModifiedFields({});
@@ -61,7 +61,7 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
       setModifiedFields({});
     }
   }, [type, tempSpace, initialData]);
-  
+
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
     setTempData((prevData) => ({
@@ -74,7 +74,32 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
     }));
   };
 
+  const validateFields = () => {
+    const requiredFields = [
+      { key: 'free_space_name', label: '空間名稱' },
+      { key: 'free_space_location', label: '空間位置' },
+      { key: 'free_floor_space_url_1', label: '照片連結 1' },
+      { key: 'free_capacity', label: '容納人數' },
+      { key: 'free_facilities', label: '設施描述' },
+      { key: 'free_space_overview', label: '空間概述' },
+    ];
+
+    for (let field of requiredFields) {
+      if (!tempData[field.key]) {
+        handleErrorMessage(dispatch, {
+          response: { data: { message: `欄位 【${field.label}】不能為空` } }
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
   const submit = async () => {
+    if (!validateFields()) {
+      return;
+    }
+
     try {
       let payload = {
         freeSpaceName: tempData.free_space_name,
@@ -93,21 +118,19 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
         freeAudioInputAvailable: tempData.free_audio_input_available ? 1 : 0,
         freeVideoInputAvailable: tempData.free_video_input_available ? 1 : 0,
         freeFacilities: tempData.free_facilities,
-        freeSpaceOverview: tempData.free_space_overview, // 添加了這一行
+        freeSpaceOverview: tempData.free_space_overview,
         freeIsActive: tempData.free_is_active ? 1 : 0,
       };
-  
-      console.log('Payload:', payload);
-  
+
       let api = `http://localhost:8080/spaces`;
       let method = 'post';
-  
-      if (type === 'edit' && tempSpace.freeSpaceId) {  // Correctly using the back-end ID
+
+      if (type === 'edit' && tempSpace.freeSpaceId) {
         api = `http://localhost:8080/spaces/${tempSpace.freeSpaceId}`;
         method = 'put';
       }
-  
-      const res = await axios({
+
+      await axios({
         method: method,
         url: api,
         headers: {
@@ -115,16 +138,17 @@ function SpaceModal({ closeSpaceModal, getSpaces, type, tempSpace }) {
         },
         data: payload,
       });
-  
-      handleSuccessMessage(dispatch, res);
+
+      handleSuccessMessage(dispatch, '操作成功', type === 'edit' ? `編輯 ${tempData.free_space_name} 免費空間成功` : '創建 新的一筆免費空間 成功');
       closeSpaceModal();
       getSpaces();
     } catch (error) {
-      console.error('API Error:', error); // Output the error message
-      handleErrorMessage(dispatch, error);
+      console.error('API Error:', error);
+      const errorMessage = error.response?.data?.message || `操作失敗，請稍後再試`;
+      handleErrorMessage(dispatch, errorMessage);
     }
   };
-
+  
   return (
     <div className='modal fade' tabIndex='-1' id='spaceModal' aria-labelledby='exampleModalLabel' aria-hidden='true'>
       <div className='modal-dialog modal-lg'>

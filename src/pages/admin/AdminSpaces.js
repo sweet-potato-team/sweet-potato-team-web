@@ -1,10 +1,15 @@
-// AdminSpaces.js
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useContext,useEffect, useRef, useState, useCallback } from 'react';
 import axios from "axios";
-import SpaceModal from "../../components/SpaceModal";
+import SpaceModal from "../../components/admin/SpaceModal";
 import Pagination from "../../components/Pagination";
 import { Modal } from "bootstrap";
-import ActionButtons from "../../components/ActionButtons";
+import ActionButtons from "../../components/admin/ActionButtons";
+import DeleteModal from "../../components/DeleteModal";
+import {
+  MessageContext,
+  handleSuccessMessage,
+  handleErrorMessage,
+} from '../../store/messageStore';
 
 function AdminSpaces() {
   const [spaces, setSpaces] = useState([]);
@@ -18,9 +23,39 @@ function AdminSpaces() {
   const [expandedSpaces, setExpandedSpaces] = useState({});
   const [type, setType] = useState('create');
   const [tempSpace, setTempSpace] = useState({});
-  const [filter, setFilter] = useState({ key: '', value: '' });
-
+  const [filterField, setFilterField] = useState(''); 
+  const [filterValue, setFilterValue] = useState('');
+  const [, dispatch] = useContext(MessageContext);
   const spaceModal = useRef(null);
+
+  // 刪除處理 - 開始
+  const [selectedSpaceId, setSelectedSpaceId] = useState(null); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const openDeleteModal = (spaceId) => {
+    setSelectedSpaceId(spaceId);
+    setShowDeleteModal(true);
+  };
+  
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedSpaceId(null);
+  };
+  
+  const handleDelete = async (spaceId) => {
+    try {
+      await axios.delete(`http://localhost:8080/spaces/${spaceId}`);
+      setSpaces((prevSpaces) => prevSpaces.filter(space => space.freeSpaceId !== spaceId));
+      
+      handleSuccessMessage(dispatch, '操作成功',`刪除 免費空間 ${spaceId} 成功`);
+      closeDeleteModal();
+    } catch (error) {
+      console.error("Error deleting space:", error);
+      const errorMessage = error.response?.data?.message || `操作失敗，請稍後再試`;
+      handleErrorMessage(dispatch, errorMessage);
+    }
+  };
+  // 刪除處理 - 結束
 
   const getSpaces = useCallback(async () => {
     try {
@@ -29,8 +64,8 @@ function AdminSpaces() {
         offset: pagination.offset,
       };
       
-      if (filter.key && filter.value) {
-        params[filter.key] = filter.value;
+      if (filterField && filterValue) {
+        params[filterField] = filterValue;
       }
 
       const spaceRes = await axios.get(`http://localhost:8080/spaces`, { params });
@@ -50,7 +85,7 @@ function AdminSpaces() {
       console.error("Error fetching spaces:", error);
       setSpaces([]);
     }
-  }, [pagination.limit, pagination.offset, filter]);
+  }, [pagination.limit, pagination.offset, filterField, filterValue]);
 
   useEffect(() => {
     spaceModal.current = new Modal('#spaceModal', {
@@ -109,29 +144,18 @@ function AdminSpaces() {
   };
 
   const handleSearchSubmit = (searchText) => {
-    setFilter((prevFilter) => ({ ...prevFilter, value: searchText }));
+    setFilterValue(searchText);
+    getSpaces();
   };
 
   const handleSelectChange = (selectedKey) => {
-    setFilter((prevFilter) => ({ ...prevFilter, key: selectedKey, value: '' }));
+    setFilterField(selectedKey);
   };
 
   const spaceOptions = [
     { value: 'spaceName', label: '名稱' },
     { value: 'spaceLocation', label: '位置' },
-    // 你可以在这里添加更多选项
   ];
-
-  const deleteSpace = async (spaceId) => {
-    if (window.confirm("確認刪除這一筆【免費】空間?")) {
-      try {
-        await axios.delete(`http://localhost:8080/spaces/${spaceId}`);
-        setSpaces((prevSpaces) => prevSpaces.filter(space => space.freeSpaceId !== spaceId));
-      } catch (error) {
-        console.error("Error deleting space:", error);
-      }
-    }
-  };
 
   return (
     <div className='p-3'>
@@ -159,8 +183,6 @@ function AdminSpaces() {
         />
       </div>
 
-
-
       <table className='table'>
         <thead>
           <tr>
@@ -185,7 +207,8 @@ function AdminSpaces() {
                 <td style={{ textAlign: 'center' }}>
                   <button type='button' className='btn btn-sm me-2' style={{ color: '#486484', padding: '5px 10px', border: '1px solid #486484', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => toggleExpandSpace(space.freeSpaceId)}>{expandedSpaces[space.freeSpaceId] ? <i className="bi bi-caret-up"></i> : <i className="bi bi-caret-down"></i>}</button>
                   <button type='button' className='btn btn-sm me-2' style={{ color: '#A4B6A4', padding: '5px 10px', border: '1px solid #A4B6A4', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => openSpaceModal('edit', space)}><i className="bi bi-feather"></i></button>
-                  <button type='button' className='btn btn-sm' style={{ color: '#9B6A6A', padding: '5px 10px', border: '1px solid #AF9797', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => deleteSpace(space.freeSpaceId)}><i className="bi bi-trash3"></i></button>                </td>
+                  <button type='button' className='btn btn-sm' style={{ color: '#9B6A6A', padding: '5px 10px', border: '1px solid #AF9797', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => openDeleteModal(space.freeSpaceId)}><i className="bi bi-trash3"></i></button>
+                </td>
               </tr>
 
               {expandedSpaces[space.freeSpaceId] && (
@@ -194,7 +217,7 @@ function AdminSpaces() {
                     <div className="row">
                       {/* 場地資訊 */}
                       <div className="col-md-4">
-                      <hr />
+                        <hr />
                         <h5 style={{ marginBottom: '15px', fontWeight: 'bold', textAlign: 'center' }}>場地資訊</h5>
                         <hr />
                         <p><strong>容納人數：</strong>{space.freeCapacity}</p>
@@ -205,7 +228,7 @@ function AdminSpaces() {
 
                       {/* 場地設備 */}
                       <div className="col-md-4">
-                      <hr />
+                        <hr />
                         <h5 style={{ marginBottom: '15px', fontWeight: 'bold', textAlign: 'center' }}>場地設備</h5>
                         <hr />
                         <p style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -219,7 +242,7 @@ function AdminSpaces() {
 
                       {/* 圖片連結 */}
                       <div className="col-md-4">
-                      <hr />
+                        <hr />
                         <h5 style={{ marginBottom: '15px', fontWeight: 'bold', textAlign: 'center' }}>圖片連結</h5>
                         <hr />
                         <p><strong>平面圖：</strong>{space.freeFloorPlanUrl ? <a href={space.freeFloorPlanUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#6096BA' }}>查看平面圖</a> : <span style={{ color: '#AC6A6A', fontWeight: 'bold' }}>目前無照片連結</span>}</p>
@@ -245,6 +268,16 @@ function AdminSpaces() {
         </tbody>
       </table>
       <Pagination pagination={pagination} changePage={changePage} />
+
+      {/* 刪除確認模態框 */}
+      {showDeleteModal && (
+        <DeleteModal
+          close={closeDeleteModal}
+          text="你確定要刪除此免費空間嗎？"
+          handleDelete={handleDelete}
+          id={selectedSpaceId}
+        />
+      )}
     </div>
   );
 }

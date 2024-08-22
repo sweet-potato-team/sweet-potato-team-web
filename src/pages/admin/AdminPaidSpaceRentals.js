@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import axios from "axios";
-import PaidSpaceRentalModal from "../../components/PaidSpaceRentalModal"; 
+import PaidSpaceRentalModal from "../../components/admin/PaidSpaceRentalModal"; 
 import Pagination from "../../components/Pagination";
 import { Modal } from "bootstrap";
-import ActionButtonsRentals from "../../components/ActionButtonsRentals";
+import ActionButtonsRentals from "../../components/admin/ActionButtonsRentals";
 
 function AdminPaidSpaceRentals() { 
   const [spaceRentals, setSpaceRentals] = useState([]); 
