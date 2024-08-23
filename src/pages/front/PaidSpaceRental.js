@@ -1,22 +1,32 @@
-import { useState } from 'react';
-import Step1 from './FreeRentalSteps/Step1';
-import Step2 from './FreeRentalSteps/Step2';
-import Step3 from './FreeRentalSteps/Step3';
-import Step4 from './FreeRentalSteps/Step4';
+import React, { useState, useEffect } from 'react';
+import Step1 from './PaidRentalSteps/Step1'; // 根據需要更改為新的步驟組件路徑
+import Step2 from './PaidRentalSteps/Step2';
+import Step3 from './PaidRentalSteps/Step3';
+import Step4 from './PaidRentalSteps/Step4';
 import axios from 'axios';
 
-function SpaceRental({ space, handleClose }) {
+function PaidSpaceRental({ space, handleClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [rentalData, setRentalData] = useState({
-    unit: '',
-    location: '',
-    dateTime: '',
-    phone: '',
-    email: '',
-    reason: '',
-    renter: ''
+      paidSpaceRentalUnit: '', // 申請單位
+      paidSpaceId: space.paidSpaceId, // 空間 ID
+      paidSpaceRentalDateTimeStart1: '', // 第一個申請開始日期
+      paidSpaceRentalDateTimeEnd1: '', // 第一個申請結束日期
+      paidSpaceRentalDateTimeStart2: '', // 第二個申請開始日期
+      paidSpaceRentalDateTimeEnd2: '', // 第二個申請結束日期
+      paidSpaceRentalPhone: '', // 聯絡電話
+      paidSpaceRentalEmail: '', // 電子郵件
+      paidSpaceRentalReason: '', // 申請理由
+      paidSpaceRentalRenter: '', // 申請人
+      paidSpaceRentalAgree: 1, // 假設使用者已同意規則，設為1
+      paidSpaceRentalSuccess: 0 // 初始狀態為未通過，設為0
   });
   const [showWarning, setShowWarning] = useState(true);
+
+  useEffect(() => {
+    console.log('Current Step:', currentStep);
+    console.log('Rental Data:', rentalData);
+  }, [currentStep, rentalData]);
 
   const nextStep = () => {
     setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));
@@ -27,44 +37,33 @@ function SpaceRental({ space, handleClose }) {
   };
 
   const handleChange = (input) => (e) => {
-    setRentalData({ ...rentalData, [input]: e.target.value });
+    const newValue = { ...rentalData, [input]: e.target.value };
+    setRentalData(newValue);
+    console.log('Updated Rental Data:', newValue);
   };
 
   const handleConfirm = async () => {
+    console.log('Submitting Rental Data:', rentalData);
+  
     try {
-      const response = await axios.post('http://localhost:8080/space_rentals', {
-        spaceRentalUnit: rentalData.unit,
-        spaceRentalLocation: rentalData.location,
-        spaceRentalDateTime: rentalData.dateTime,
-        spaceRentalPhone: rentalData.phone,
-        spaceRentalEmail: rentalData.email,
-        spaceRentalReason: rentalData.reason,
-        spaceRentalRenter: rentalData.renter,
-      });
+        const response = await axios.post('http://localhost:8080/paid_space_rentals', {
+            paidSpaceId: rentalData.paidSpaceId,
+            paidSpaceRentalUnit: rentalData.paidSpaceRentalUnit,
+            paidSpaceRentalDateTimeStart1: rentalData.paidSpaceRentalDateTimeStart1,
+            paidSpaceRentalDateTimeEnd1: rentalData.paidSpaceRentalDateTimeEnd1,
+            paidSpaceRentalDateTimeStart2: rentalData.paidSpaceRentalDateTimeStart2,
+            paidSpaceRentalDateTimeEnd2: rentalData.paidSpaceRentalDateTimeEnd2,
+            paidSpaceRentalPhone: rentalData.paidSpaceRentalPhone,
+            paidSpaceRentalEmail: rentalData.paidSpaceRentalEmail,
+            paidSpaceRentalReason: rentalData.paidSpaceRentalReason,
+            paidSpaceRentalRenter: rentalData.paidSpaceRentalRenter,
+            paidSpaceRentalAgree: rentalData.paidSpaceRentalAgree,
+            paidSpaceRentalSuccess: rentalData.paidSpaceRentalSuccess,
+        });
 
-      console.log('POST response:', response.data);
+        console.log('POST response:', response.data);
 
-      await axios.post('http://localhost:8080/sendEmail', {
-        to: rentalData.email,
-        subject: '租借空間確認通知',
-        body: 
-          `親愛的${rentalData.renter}，
-
-          您的租借申請已成功提交。以下是您的租借詳情：
-          - 租借空間：${rentalData.location}
-          - 租借日期與時段：${rentalData.dateTime}
-          - 申請單位：${rentalData.unit}
-          - 租借事由：${rentalData.reason}
-
-          如有任何問題，請隨時與我們聯繫。
-
-          此致，
-          您的租借管理團隊`
-      });
-
-      console.log('Email sent to:', rentalData.email);
-
-      setCurrentStep(4);
+        setCurrentStep(4);
     } catch (error) {
       console.error('POST error:', error);
     }
@@ -180,7 +179,7 @@ function SpaceRental({ space, handleClose }) {
         </div>
       )}
       {!showWarning && currentStep < 4 && renderProgressBar()}
-      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.spaceName} />}
+      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.paidSpaceName} />}
       {!showWarning && currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} />}
       {!showWarning && currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} handleConfirm={handleConfirm} />}
       {!showWarning && currentStep === 4 && <Step4 rentalData={rentalData} handleClose={handleClose} />}
@@ -188,4 +187,4 @@ function SpaceRental({ space, handleClose }) {
   );
 }
 
-export default SpaceRental;
+export default PaidSpaceRental;

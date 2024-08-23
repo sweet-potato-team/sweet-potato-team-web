@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Step1 from './RentalSteps/Step1';
-import Step2 from './RentalSteps/Step2';
-import Step3 from './RentalSteps/Step3';
-import Step4 from './RentalSteps/Step4';
+import Step1 from './FreeRentalSteps/Step1';
+import Step2 from './FreeRentalSteps/Step2';
+import Step3 from './FreeRentalSteps/Step3';
+import Step4 from './FreeRentalSteps/Step4';
 import axios from 'axios';
 
 function SpaceRental({ space, handleClose }) {

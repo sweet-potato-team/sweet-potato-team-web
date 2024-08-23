@@ -6,6 +6,8 @@ import AdminSpaces from './pages/admin/AdminSpaces';
 import AdminPaidSpaces from './pages/admin/AdminPaidSpaces';
 import Home from './pages/front/Home';
 import Spaces from './pages/front/Spaces';
+import PaidSpaces from './pages/front/PaidSpaces';
+
 import SpaceRental from './pages/front/SpaceRental';
 import AdminSpaceRentals from './pages/admin/AdminSpaceRentals';
 import AdminPaidSpaceRentals from './pages/admin/AdminPaidSpaceRentals';
@@ -19,6 +21,7 @@ function App() {
       <Routes>
         {/* 直接將這些頁面掛載在 '/' 路徑下 */}
         <Route path='/' element={<Home />}></Route>
+          <Route path='paid_spaces' element={<PaidSpaces />}></Route>
           <Route path='spaces' element={<Spaces />}></Route>
           <Route path='space_rentals' element={<SpaceRental />}></Route>
         

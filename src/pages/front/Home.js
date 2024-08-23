@@ -41,7 +41,7 @@ function Home() {
         </h2>
         <div className="d-flex justify-content-center align-items-center mb-3" style={{ width: '100%' }}>
           <Link 
-            to="products" 
+            to="paid_spaces" 
             className="btn btn-primary btn-lg mx-4" 
             style={{ flex: 1, backgroundColor: '#D3E9FF', border: 'none', padding: '60px', borderRadius: '10px', fontSize: '1.7rem', fontWeight: 'bold', color: '#415A77', transition: 'background-color 0.3s, color 0.3s' }}
             onMouseOver={(e) => { e.target.style.backgroundColor = '#6096BA'; e.target.style.color = 'white'; }}

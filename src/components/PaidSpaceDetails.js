@@ -1,7 +1,7 @@
 import { Button } from 'react-bootstrap';
 import SpaceCarousel from './SpaceCarousel';
 
-function SpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
+function PaidSpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
   const textStyle = { fontSize: '16px', padding: '8px' };
   const btnStyle = {
     color: 'rgb(65, 90, 119)',
@@ -32,14 +32,14 @@ function SpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
         <div className="row g-0 h-100">
           <div className="col-md-4 position-relative h-100" style={{ display: 'flex', flexDirection: 'column' }}>
             <SpaceCarousel
-              spaceId={space.freeSpaceId}
+              spaceId={space.paidSpaceId}
               urls={[
-                space.freeFloorPlanUrl,
-                space.freeFloorSpaceUrl1,
-                space.freeFloorSpaceUrl2,
-                space.freeFloorSpaceUrl3,
+                space.paidFloorPlanUrl,
+                space.paidFloorSpaceUrl1,
+                space.paidFloorSpaceUrl2,
+                space.paidFloorSpaceUrl3,
               ]}
-              altText={space.freeSpaceName}
+              altText={space.paidSpaceName}
               style={{ flex: 1, height: '100%', objectFit: 'cover' }} // 確保 SpaceCarousel 填滿容器
             />
           </div>
@@ -47,19 +47,19 @@ function SpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
             <div className="card-body d-flex flex-column justify-content-between h-100 p-4">
               <div>
                 <h4 className="card-title" style={{ fontWeight: 'bold', marginBottom: '15px', fontSize: '30px' }}>
-                  {space.freeSpaceName}
+                  {space.paidSpaceName}
                 </h4>
-                {renderFeature('位置', space.freeSpaceLocation)}
-                {renderFeature('座位數', space.freeCapacity)}
-                {renderFeature('設施', space.freeFacilities)}
-                {renderFeature('概述', space.freeSpaceOverview)}
+                {renderFeature('位置', space.paidSpaceLocation)}
+                {renderFeature('座位數', space.paidCapacity)}
+                {renderFeature('設施', space.paidFacilities)}
+                {renderFeature('概述', space.paidSpaceOverview)}
 
                 <hr className="my-3" />
 
                 <div className="d-flex align-items-center">
-                  {space.freeInternetAvailable > 0 && renderIconFeature('bi bi-router', '網路')}
-                  {space.freeAudioInputAvailable > 0 && renderIconFeature('bi bi-mic-fill', '聲音輸入')}
-                  {space.freeVideoInputAvailable > 0 && renderIconFeature('bi bi-reception-3', '顯示訊號輸入')}
+                  {space.paidInternetAvailable > 0 && renderIconFeature('bi bi-router', '網路')}
+                  {space.paidAudioInputAvailable > 0 && renderIconFeature('bi bi-mic-fill', '聲音輸入')}
+                  {space.paidVideoInputAvailable > 0 && renderIconFeature('bi bi-reception-3', '顯示訊號輸入')}
                 </div>
               </div>
             </div>
@@ -69,18 +69,18 @@ function SpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
               </Button>
 
               <Button
-                variant={space.freeIsActive ? 'success' : 'secondary'}
-                onClick={() => space.freeIsActive && handleShowModal(space)}
-                disabled={!space.freeIsActive}
+                variant={space.paidIsActive ? 'success' : 'secondary'}
+                onClick={() => space.paidIsActive && handleShowModal(space)}
+                disabled={!space.paidIsActive}
                 style={{
                   backgroundColor: '#415A77',
                   borderColor: '#415A77',
                   color: '#fff',
-                  cursor: space.freeIsActive ? 'pointer' : 'not-allowed',
+                  cursor: space.paidIsActive ? 'pointer' : 'not-allowed',
                   fontWeight: 'bold',
                 }}
               >
-                {space.freeIsActive ? '線上租借' : '暫不可租借'}
+                {space.paidIsActive ? '線上租借' : '暫不可租借'}
               </Button>
             </div>
           </div>
@@ -90,4 +90,4 @@ function SpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
   );
 }
 
-export default SpaceDetails;
+export default PaidSpaceDetails;
