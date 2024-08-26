@@ -3,10 +3,11 @@ import axios from 'axios';
 import { Modal } from 'react-bootstrap';
 import Pagination from '../../components/Pagination';
 import Loading from '../../components/Loading';
-import SpaceRental from './SpaceRental'; 
+import SpaceRental from './SpaceRental';
 import SpaceDetails from '../../components/SpaceDetails';
 import SpaceCarousel from '../../components/SpaceCarousel';
-import ToggleSwitch from '../../components/ToggleSwitch';  // 引入新的組件
+import ToggleSwitch from '../../components/ToggleSwitch';
+import ReturnHomeButton from '../../components/ReturnHomeButton';  // 引入新的組件
 
 function Spaces() {
   const [spaces, setSpaces] = useState([]);
@@ -19,9 +20,9 @@ function Spaces() {
   });
   const [isLoading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showPhotoModal, setShowPhotoModal] = useState(false); 
-  const [selectedSpace, setSelectedSpace] = useState(null); 
-  const [toggleView, setToggleView] = useState(false); // Toggle for view: false - 時間總覽, true - 查看空間
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState(null);
+  const [toggleView, setToggleView] = useState(false);
 
   const handleShowModal = (space) => {
     setSelectedSpace(space);
@@ -82,16 +83,17 @@ function Spaces() {
 
   return (
     <>
-      <div className="container mt-md-5 mt-3 mb-7 full-height">
+      <div className="container mt-md-5 mt-3 mb-7 full-height" style={{ position: 'relative', paddingTop: '50px' }}>
+        <ReturnHomeButton /> {/* 使用新的組件 */}
         <div className="d-flex justify-content-center mb-4">
-          <ToggleSwitch toggleView={toggleView} setToggleView={setToggleView} /> {/* 使用新組件 */}
+          <ToggleSwitch toggleView={toggleView} setToggleView={setToggleView} />
         </div>
         <Loading isLoading={isLoading} />
         <div className="row">
           {spaces.length === 0 && <p>No spaces available.</p>}
           {spaces.map((space, index) => (
             <SpaceDetails
-              key={`${space.freeSpaceId}-${index}`} // 確保 key 的一致性
+              key={`${space.freeSpaceId}-${index}`}
               space={space}
               handleShowModal={handleShowModal}
               handleShowPhotoModal={handleShowPhotoModal}

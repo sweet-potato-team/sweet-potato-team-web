@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Step1 from './PaidRentalSteps/Step1'; // 根據需要更改為新的步驟組件路徑
+import Step1 from './PaidRentalSteps/Step1';
 import Step2 from './PaidRentalSteps/Step2';
 import Step3 from './PaidRentalSteps/Step3';
 import Step4 from './PaidRentalSteps/Step4';
@@ -8,25 +8,41 @@ import axios from 'axios';
 function PaidSpaceRental({ space, handleClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [rentalData, setRentalData] = useState({
-      paidSpaceRentalUnit: '', // 申請單位
-      paidSpaceId: space.paidSpaceId, // 空間 ID
-      paidSpaceRentalDateTimeStart1: '', // 第一個申請開始日期
-      paidSpaceRentalDateTimeEnd1: '', // 第一個申請結束日期
-      paidSpaceRentalDateTimeStart2: '', // 第二個申請開始日期
-      paidSpaceRentalDateTimeEnd2: '', // 第二個申請結束日期
-      paidSpaceRentalPhone: '', // 聯絡電話
-      paidSpaceRentalEmail: '', // 電子郵件
-      paidSpaceRentalReason: '', // 申請理由
-      paidSpaceRentalRenter: '', // 申請人
-      paidSpaceRentalAgree: 1, // 假設使用者已同意規則，設為1
-      paidSpaceRentalSuccess: 0 // 初始狀態為未通過，設為0
+    paidSpaceRentalUnit: '', 
+    paidSpaceId: space.paidSpaceId, 
+    paidSpaceRentalDateTimeStart1: '', 
+    paidSpaceRentalDateTimeEnd1: '', 
+    paidSpaceRentalDateTimeStart2: '', 
+    paidSpaceRentalDateTimeEnd2: '', 
+    paidSpaceRentalPhone: '', 
+    paidSpaceRentalEmail: '', 
+    paidSpaceRentalReason: '', 
+    paidSpaceRentalRenter: '', 
+    paidSpaceRentalUnitType: '', 
+    paidSpaceRentalActivityType: '', 
+    paidSpaceRentalActivityTypeOther: '', 
+    paidSpaceRentalUsers: '', 
+    paidSpaceRentalRemark1: '', 
+    paidSpaceRentalRemark2: '', 
+    paidSpaceRentalFeeActivityPartner: false, 
+    paidSpaceRentalAgree: false, 
+    paidSpaceRentalSuccess: 0, 
+    paidSpaceRentalFeeSpace: null, 
+    paidSpaceRentalFeeClean: null, 
+    paidSpaceRentalFeePermission: null, 
+    paidSpaceRentalPayDate: null, 
+    chargeId: null,
+    paidSpaceRentalFeeSpaceType: 2 
   });
   const [showWarning, setShowWarning] = useState(true);
 
   useEffect(() => {
     console.log('Current Step:', currentStep);
+  }, [currentStep]);
+
+  useEffect(() => {
     console.log('Rental Data:', rentalData);
-  }, [currentStep, rentalData]);
+  }, [rentalData]);
 
   const nextStep = () => {
     setCurrentStep((prevStep) => Math.min(prevStep + 1, 4));
@@ -37,33 +53,180 @@ function PaidSpaceRental({ space, handleClose }) {
   };
 
   const handleChange = (input) => (e) => {
-    const newValue = { ...rentalData, [input]: e.target.value };
-    setRentalData(newValue);
-    console.log('Updated Rental Data:', newValue);
+    let value = e.target.value;
+    setRentalData((prevData) => ({
+      ...prevData,
+      [input]: value,
+    }));
   };
 
-  const handleConfirm = async () => {
-    console.log('Submitting Rental Data:', rentalData);
-  
+  const calculatePayDate = (startDateTime) => {
+    const date = new Date(startDateTime);
+    let daysToSubtract = 3;
+
+    while (daysToSubtract > 0) {
+      date.setDate(date.getDate() - 1);
+      if (date.getDay() !== 0 && date.getDay() !== 6) {
+        daysToSubtract--;
+      }
+    }
+
+    return date.toISOString().split('T')[0];
+  };
+
+  const handleConfirm = async (transformedData) => {
     try {
-        const response = await axios.post('http://localhost:8080/paid_space_rentals', {
-            paidSpaceId: rentalData.paidSpaceId,
-            paidSpaceRentalUnit: rentalData.paidSpaceRentalUnit,
-            paidSpaceRentalDateTimeStart1: rentalData.paidSpaceRentalDateTimeStart1,
-            paidSpaceRentalDateTimeEnd1: rentalData.paidSpaceRentalDateTimeEnd1,
-            paidSpaceRentalDateTimeStart2: rentalData.paidSpaceRentalDateTimeStart2,
-            paidSpaceRentalDateTimeEnd2: rentalData.paidSpaceRentalDateTimeEnd2,
-            paidSpaceRentalPhone: rentalData.paidSpaceRentalPhone,
-            paidSpaceRentalEmail: rentalData.paidSpaceRentalEmail,
-            paidSpaceRentalReason: rentalData.paidSpaceRentalReason,
-            paidSpaceRentalRenter: rentalData.paidSpaceRentalRenter,
-            paidSpaceRentalAgree: rentalData.paidSpaceRentalAgree,
-            paidSpaceRentalSuccess: rentalData.paidSpaceRentalSuccess,
-        });
+      const earliestDateTime = rentalData.paidSpaceRentalDateTimeStart1 < rentalData.paidSpaceRentalDateTimeStart2 || !rentalData.paidSpaceRentalDateTimeStart2 
+        ? rentalData.paidSpaceRentalDateTimeStart1 
+        : rentalData.paidSpaceRentalDateTimeStart2;
 
-        console.log('POST response:', response.data);
+      const postData = {
+        ...transformedData,
+        paidSpaceRentalPayDate: calculatePayDate(earliestDateTime),
+        paidSpaceRentalActivityTypeOther: transformedData.paidSpaceRentalActivityType === 3 ? transformedData.paidSpaceRentalActivityTypeOther : '', 
+        paidSpaceRentalAgree: rentalData.paidSpaceRentalAgree ? 1 : 0, 
+        paidSpaceRentalFeeActivityPartner: rentalData.paidSpaceRentalFeeActivityPartner ? 1 : 0, 
+      };
 
-        setCurrentStep(4);
+      console.log('POST Data:', postData);
+
+      const response = await axios.post('http://localhost:8080/paid_space_rentals', postData);
+
+      console.log('POST response:', response.data);
+
+      // 準備電子郵件內容
+      const formattedStartDate1 = rentalData.paidSpaceRentalDateTimeStart1.replace('T', ' ');
+      const formattedEndDate1 = rentalData.paidSpaceRentalDateTimeEnd1.replace('T', ' ');
+      const formattedStartDate2 = rentalData.paidSpaceRentalDateTimeStart2 ? rentalData.paidSpaceRentalDateTimeStart2.replace('T', ' ') : null;
+      const formattedEndDate2 = rentalData.paidSpaceRentalDateTimeEnd2 ? rentalData.paidSpaceRentalDateTimeEnd2.replace('T', ' ') : null;
+
+      const emailBody = `
+        <html lang="zh-TW">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>租借申請確認</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.8;
+              color: #333;
+              background-color: #f2f2f2;
+              margin: 0;
+              padding: 0;
+            }
+            .email-container {
+              max-width: 600px;
+              margin: 40px auto;
+              padding: 30px;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              background-color: #ffffff;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .email-header {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            .email-header img {
+              max-width: 400px;
+              height: auto;
+            }
+            .email-header h2 {
+              font-size: 24px;
+              color: #333;
+              margin: 20px 0 10px;
+            }
+            .email-content {
+              font-size: 16px;
+              line-height: 1.8;
+              color: #555;
+            }
+            .email-content ul {
+              list-style: none;
+              padding: 0 20px;
+            }
+            .email-content ul li {
+              margin-bottom: 10px;
+            }
+            .email-content ul li strong {
+              color: #333;
+            }
+            .email-footer {
+              text-align: center;
+              font-size: 14px;
+              color: #777;
+              margin-top: 30px;
+              border-top: 1px solid #ddd;
+              padding-top: 10px;
+              line-height: 1.4;
+            }
+            .email-footer p {
+              margin: 5px 0;
+            }
+            .centered-box {
+              display: block;
+              margin: 20px auto;
+              padding: 15 20px;
+              border: 2px solid #333;
+              border-radius: 10px;
+              background-color: #f9f9f9;
+              font-weight: bold;
+              text-align: left;
+              width: fit-content;
+              max-width: 100%;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-container">
+            <div class="email-header">
+              <img src="http://www.caic.ncu.edu.tw/images/joomlashine/logo/logo.png" alt="Logo" />
+              <h2>租借申請已成功提交</h2>
+            </div>
+            <div class="email-content">
+              <p>親愛的 ${rentalData.paidSpaceRentalRenter}，</p>
+              <p>您的租借申請已成功提交。以下是您的租借詳情：</p>
+              <div class="centered-box">
+                <ul>
+                  <li><strong>申請場地： </strong> ${space.paidSpaceName}</li>                
+                  <li><strong>申請單位： </strong> ${rentalData.paidSpaceRentalUnit}</li>
+                  <li><strong>第一筆申請開始時間： </strong> ${formattedStartDate1}</li>
+                  <li><strong>第一筆申請結束時間： </strong> ${formattedEndDate1}</li>
+                  ${formattedStartDate2 && formattedEndDate2 ? `
+                  <li><strong>第二筆申請開始時間： </strong> ${formattedStartDate2}</li>
+                  <li><strong>第二筆申請結束時間： </strong> ${formattedEndDate2}</li>` : ''}
+                  <li><strong>聯絡電話： </strong> ${rentalData.paidSpaceRentalPhone}</li>
+                  <li><strong>租借事由： </strong> ${rentalData.paidSpaceRentalReason}</li>
+                  <li><strong>空間費用： </strong> ${rentalData.paidSpaceRentalFeeSpace}</li>
+                  <li><strong>清潔費用： </strong> ${rentalData.paidSpaceRentalFeeClean}</li>
+                  <li><strong>保證金： </strong> ${rentalData.paidSpaceRentalFeePermission}</li>
+                </ul>
+              </div>
+              <p>請再次確認上表內容無誤，我們會盡快審核您的申請，請在申請通過後於活動開始前三個工作天進行繳費，若有活動議程資料也請繳費時一並附上提交。</p>
+              <p>如有任何問題，請隨時與我們聯繫。</p>
+            </div>
+            <div class="email-footer">
+              <p>32001 桃園市中壢區中大路300號</p>
+              <p>(03)490-8851</p>
+              <p>(03)490-0488)</p>
+              <p>(03)420-0697)</p>
+              <p>中央大學總機電話: (03)422-7151 校內分機:27086~27089 傳真: (03)420-5604</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      await axios.post('http://localhost:8080/sendEmail', {
+        to: rentalData.paidSpaceRentalEmail,
+        subject: '租借空間確認通知',
+        body: emailBody,
+      });
+
+      console.log('Email sent to:', rentalData.paidSpaceRentalEmail);
+
+      setCurrentStep(4);
     } catch (error) {
       console.error('POST error:', error);
     }
@@ -179,9 +342,9 @@ function PaidSpaceRental({ space, handleClose }) {
         </div>
       )}
       {!showWarning && currentStep < 4 && renderProgressBar()}
-      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.paidSpaceName} />}
-      {!showWarning && currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} />}
-      {!showWarning && currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} handleConfirm={handleConfirm} />}
+      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.paidSpaceName} rentalData={rentalData}/>}
+      {!showWarning && currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} setRentalData={setRentalData} />}
+      {!showWarning && currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} setRentalData={setRentalData} handleConfirm={handleConfirm} />}
       {!showWarning && currentStep === 4 && <Step4 rentalData={rentalData} handleClose={handleClose} />}
     </div>
   );

@@ -2,7 +2,7 @@ import { Button } from 'react-bootstrap';
 import SpaceCarousel from './SpaceCarousel';
 
 function PaidSpaceDetails({ space, handleShowModal, handleShowPhotoModal }) {
-  const textStyle = { fontSize: '16px', padding: '8px' };
+  const textStyle = { fontSize: '17px', padding: '5px' };
   const btnStyle = {
     color: 'rgb(65, 90, 119)',
     backgroundColor: 'rgb(211, 233, 255)',

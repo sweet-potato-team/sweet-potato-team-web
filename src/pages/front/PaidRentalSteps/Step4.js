@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Step4({ rentalData, handleClose }) {  // 接收 handleClose prop
+function Step4({ rentalData, handleClose }) {
   const containerStyle = {
     backgroundColor: '#f8f9fa',
     padding: '2rem',
@@ -37,7 +37,7 @@ function Step4({ rentalData, handleClose }) {  // 接收 handleClose prop
     <div style={containerStyle}>
       <h2 style={titleStyle}>申請成功</h2>
       <p>已將預約資料送至所填寫之郵箱，請查收並等待管理員審核。</p>
-      <button style={buttonStyle} onClick={handleClick}>確認</button> {/* 點擊確認按鈕時調用 handleClick */}
+      <button style={buttonStyle} onClick={handleClick}>確認</button>
     </div>
   );
 }

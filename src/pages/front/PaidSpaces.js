@@ -6,7 +6,8 @@ import Loading from '../../components/Loading';
 import PaidSpaceRental from './PaidSpaceRental'; 
 import PaidSpaceDetails from '../../components/PaidSpaceDetails';
 import SpaceCarousel from '../../components/SpaceCarousel';
-import ToggleSwitch from '../../components/ToggleSwitch';  // 引入 ToggleSwitch 組件
+import ToggleSwitch from '../../components/ToggleSwitch'; 
+import ReturnHomeButton from '../../components/ReturnHomeButton'; // 引入新的組件
 
 function PaidSpaces() {
   const [paidSpaces, setPaidSpaces] = useState([]);
@@ -21,7 +22,7 @@ function PaidSpaces() {
   const [showModal, setShowModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false); 
   const [selectedPaidSpace, setSelectedPaidSpace] = useState(null);
-  const [toggleView, setToggleView] = useState(false); // Toggle for view: false - 時間總覽, true - 查看空間
+  const [toggleView, setToggleView] = useState(false); 
 
   const handleShowModal = (paidSpace) => {
     setSelectedPaidSpace(paidSpace);
@@ -82,16 +83,17 @@ function PaidSpaces() {
 
   return (
     <>
-      <div className="container mt-md-5 mt-3 mb-7 full-height">
+      <div className="container mt-md-5 mt-3 mb-7 full-height" style={{ position: 'relative', paddingTop: '50px' }}>
+        <ReturnHomeButton /> {/* 使用新的組件 */}
         <div className="d-flex justify-content-center mb-4">
-          <ToggleSwitch toggleView={toggleView} setToggleView={setToggleView} /> {/* 套用 ToggleSwitch 組件 */}
+          <ToggleSwitch toggleView={toggleView} setToggleView={setToggleView} /> 
         </div>
         <Loading isLoading={isLoading} />
         <div className="row">
           {paidSpaces.length === 0 && <p>No paid spaces available.</p>}
           {paidSpaces.map((paidSpace, index) => (
             <PaidSpaceDetails
-              key={`${paidSpace.paidSpaceId}-${index}`} // 確保 key 的一致性
+              key={`${paidSpace.paidSpaceId}-${index}`} 
               space={paidSpace}
               handleShowModal={handleShowModal}
               handleShowPhotoModal={handleShowPhotoModal}
@@ -106,7 +108,7 @@ function PaidSpaces() {
       {/* 線上租借模態框 */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>租借空間：{selectedPaidSpace && selectedPaidSpace.paidSpaceName}</Modal.Title> {/* 確保 selectedPaidSpace 的一致性 */}
+          <Modal.Title>租借空間：{selectedPaidSpace && selectedPaidSpace.paidSpaceName}</Modal.Title> 
         </Modal.Header>
         <Modal.Body>
           {selectedPaidSpace && <PaidSpaceRental space={selectedPaidSpace} handleClose={handleCloseModal} />} 
@@ -119,7 +121,7 @@ function PaidSpaces() {
         <Modal.Body>
           {selectedPaidSpace && (
             <SpaceCarousel
-              spaceId={selectedPaidSpace.paidSpaceId}  // 確保 spaceId 的一致性
+              spaceId={selectedPaidSpace.paidSpaceId} 
               urls={[
                 selectedPaidSpace.paidItemPhotoUrl1,
                 selectedPaidSpace.paidItemPhotoUrl2,
