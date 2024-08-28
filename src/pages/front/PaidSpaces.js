@@ -7,7 +7,7 @@ import PaidSpaceRental from './PaidSpaceRental';
 import PaidSpaceDetails from '../../components/PaidSpaceDetails';
 import SpaceCarousel from '../../components/SpaceCarousel';
 import ToggleSwitch from '../../components/ToggleSwitch'; 
-import ReturnHomeButton from '../../components/ReturnHomeButton'; // 引入新的組件
+import NavigationBar from '../../components/NavigationBar'; // 引入導航欄組件eturnHomeButton'; // 引入新的組件
 
 function PaidSpaces() {
   const [paidSpaces, setPaidSpaces] = useState([]);
@@ -84,7 +84,7 @@ function PaidSpaces() {
   return (
     <>
       <div className="container mt-md-5 mt-3 mb-7 full-height" style={{ position: 'relative', paddingTop: '50px' }}>
-        <ReturnHomeButton /> {/* 使用新的組件 */}
+        <NavigationBar /> {/* 加入導航欄 */}
         <div className="d-flex justify-content-center mb-4">
           <ToggleSwitch toggleView={toggleView} setToggleView={setToggleView} /> 
         </div>

@@ -59,7 +59,7 @@ function DocumentModal({ closeDocumentModal, getDocuments, type, tempDocument })
         method = 'put';
       }
   
-      const res = await axios({
+      await axios({
         method: method,
         url: api,
         headers: {
@@ -68,12 +68,14 @@ function DocumentModal({ closeDocumentModal, getDocuments, type, tempDocument })
         data: payload,
       });
   
-      handleSuccessMessage(dispatch, res);
+      handleSuccessMessage(dispatch, '更新成功', "成功提交一個文件的變動");
+      
       closeDocumentModal();
       getDocuments();
     } catch (error) {
       console.error('API Error:', error); 
-      handleErrorMessage(dispatch, error);
+      handleErrorMessage(dispatch, '更新失敗', "提交一個文件的變動中發生錯誤");
+
     }
   };
 

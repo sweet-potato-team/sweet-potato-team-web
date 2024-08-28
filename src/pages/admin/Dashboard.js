@@ -67,7 +67,9 @@ function Dashboard() {
               {/* <SidebarLink to='/admin/products' iconClass='bi bi-archive' label='產品列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
               <SidebarLink to='/admin/coupons' iconClass='bi bi-ticket-perforated-fill' label='優惠卷列表' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' /> */}
               {/* 新增的連結 */}
-              <SidebarLink to='/admin/manage_times' iconClass='bi bi-clock-history' label='時間管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/manage_free_times' iconClass='bi bi-calendar-week me-2' label='免費空間 時間' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+              <SidebarLink to='/admin/manage_paid_times' iconClass='bi bi-calendar-week me-2' label='付費空間 時間' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
+
               <SidebarLink to='/admin/manage_charges' iconClass='bi bi-ticket-perforated' label='收費管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
               <SidebarLink to='/admin/manage_documents' iconClass='bi bi-file-earmark-medical' label='文件管理' isCollapsed={isCollapsed} activeColor='#415A77' defaultColor='#415A77' />
             </ul>

@@ -17,7 +17,8 @@ function SpaceRental({ space, handleClose }) {
       spaceRentalReason: '', // 申請理由
       spaceRentalRenter: '' // 申請人
   });
-  const [showWarning, setShowWarning] = useState(true);
+  // const [showWarning] = useState(true);
+  // const [showWarning, setShowWarning] = useState(true);
 
   useEffect(() => {
     console.log('Current Step:', currentStep);
@@ -187,9 +188,9 @@ function SpaceRental({ space, handleClose }) {
     }
   };
 
-  const handleWarningConfirm = () => {
-    setShowWarning(false);
-  };
+  // const handleWarningConfirm = () => {
+  //   setShowWarning(false);
+  // };
 
   const renderProgressBar = () => {
     const steps = [
@@ -254,7 +255,7 @@ function SpaceRental({ space, handleClose }) {
 
   return (
     <div>
-      {showWarning && (
+      {/* {showWarning && (
         <div
           style={{
             position: 'fixed',
@@ -295,12 +296,12 @@ function SpaceRental({ space, handleClose }) {
             </button>
           </div>
         </div>
-      )}
-      {!showWarning && currentStep < 4 && renderProgressBar()}
-      {!showWarning && currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.freeSpaceName} />}
-      {!showWarning && currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} />}
-      {!showWarning && currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} handleConfirm={handleConfirm} />}
-      {!showWarning && currentStep === 4 && <Step4 rentalData={rentalData} handleClose={handleClose} />}
+      )} */}
+      {currentStep < 4 && renderProgressBar()}
+      {currentStep === 1 && <Step1 nextStep={nextStep} setRentalData={setRentalData} spaceName={space.freeSpaceName} />}
+      {currentStep === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} handleChange={handleChange} rentalData={rentalData} />}
+      {currentStep === 3 && <Step3 nextStep={nextStep} prevStep={prevStep} rentalData={rentalData} handleConfirm={handleConfirm} />}
+      {currentStep === 4 && <Step4 rentalData={rentalData} handleClose={handleClose} />}
     </div>
   );
 }

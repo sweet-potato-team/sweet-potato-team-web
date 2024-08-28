@@ -38,7 +38,7 @@ function AdminPaidSpaceRentals() {
         setSpaceRentals([]);
       }
     } catch (error) {
-      console.error("Error fetching paid space rentals:", error);
+      console.error("0826 Error fetching paid space rentals:", error);
       setSpaceRentals([]);
     }
   }, [pagination.limit, pagination.offset, filterField, filterValue]);

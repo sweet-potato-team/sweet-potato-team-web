@@ -50,8 +50,8 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
         free_space_id: tempRental.freeSpaceId || '',
         space_rental_unit: tempRental.spaceRentalUnit || '',
         space_rental_location: selectedLocation ? selectedLocation.freeSpaceName : '',
-        space_rental_date_start: tempRental.spaceRentalDateStart || '',
-        space_rental_date_end: tempRental.spaceRentalDateEnd || '',
+        space_rental_date_start: tempRental.spaceRentalDateStart ? tempRental.spaceRentalDateStart.replace(' ', 'T').slice(0, 16) : '',
+        space_rental_date_end: tempRental.spaceRentalDateEnd ? tempRental.spaceRentalDateEnd.replace(' ', 'T').slice(0, 16) : '',
         space_rental_phone: tempRental.spaceRentalPhone || '',
         space_rental_email: tempRental.spaceRentalEmail || '',
         space_rental_reason: tempRental.spaceRentalReason || '',
@@ -123,6 +123,7 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
 
     return true;
   };
+
   const handleTimeValidation = () => {
     const startTime = new Date(tempData.space_rental_date_start);
     const endTime = new Date(tempData.space_rental_date_end);
@@ -146,56 +147,105 @@ function SpaceRentalModal({ closeRentalModal, getSpaceRentals, type, tempRental 
       return false;
     }
   
-    return true;
-  };
-
-  
-  const submit = async () => {
-    if (!validateFields() || !handleTimeValidation()) {
-      return;
+    // 檢查開始時間是否早於08:00
+    const startHour = startTime.getHours();
+    if (startHour < 8) {
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '開始時間不能早於早上8點' } }
+      });
+      return false;
     }
   
-    try {
-      const payload = {
-        freeSpaceId: tempData.free_space_id,
-        spaceRentalUnit: tempData.space_rental_unit,
-        spaceRentalDateStart: tempData.space_rental_date_start.replace(' ', 'T'),
-        spaceRentalDateEnd: tempData.space_rental_date_end.replace(' ', 'T'),
-        spaceRentalPhone: tempData.space_rental_phone,
-        spaceRentalEmail: tempData.space_rental_email,
-        spaceRentalReason: tempData.space_rental_reason,
-        spaceRentalRenter: tempData.space_rental_renter,
-        spaceRentalAgree: tempData.space_rental_agree ? 1 : 0,
-        spaceRentalSuccess: 0, // 初始狀態為未通過
-      };
-  
-      const api = type === 'edit' && tempRental.spaceRentalId
-        ? `http://localhost:8080/space_rentals/${tempRental.spaceRentalId}`
-        : 'http://localhost:8080/space_rentals';
-  
-      const method = type === 'edit' ? 'put' : 'post';
-  
-      await axios({
-        method: method,
-        url: api,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: payload,
+    // 檢查結束時間是否晚於18:00
+    const endHour = endTime.getHours();
+    if (endHour >= 18 && endMinutes > 0) { // 結束時間超過18:00
+      handleErrorMessage(dispatch, {
+        response: { data: { message: '結束時間不能晚於下午6點' } }
       });
+      return false;
+    }
   
-      if (type === 'create') {
-        handleSuccessMessage(dispatch, '創建成功', '創建 新的一筆付費空間 成功');
-      } else if (type === 'edit') {
-        handleSuccessMessage(dispatch, '更新成功', `編輯編號為 ${tempData.free_space_id} 的空間成功`);
-      }
-      
-      closeRentalModal(); // 成功訊息後立即關閉視窗
-      getSpaceRentals(); // 刷新租借列表
+    return true;
+  };
   
+
+  const submit = async () => {
+    if (!validateFields() || !handleTimeValidation()) {
+        return;
+    }
+
+    try {
+        // 確保日期格式符合後端期望的格式
+        const payload = {
+            freeSpaceId: tempData.free_space_id,
+            spaceRentalUnit: tempData.space_rental_unit,
+            spaceRentalDateStart: tempData.space_rental_date_start.replace(' ', 'T'),
+            spaceRentalDateEnd: tempData.space_rental_date_end.replace(' ', 'T'),
+            spaceRentalPhone: tempData.space_rental_phone,
+            spaceRentalEmail: tempData.space_rental_email,
+            spaceRentalReason: tempData.space_rental_reason,
+            spaceRentalRenter: tempData.space_rental_renter,
+            spaceRentalAgree: tempData.space_rental_agree ? 1 : 0,
+            spaceRentalSuccess: 2, // 初始狀態為未選擇
+        };
+
+        console.log("發送請求的 payload:", payload);
+
+        const api = type === 'edit' && tempRental.spaceRentalId
+            ? `http://localhost:8080/space_rentals/${tempRental.spaceRentalId}`
+            : 'http://localhost:8080/space_rentals';
+
+        const method = type === 'edit' ? 'put' : 'post';
+
+        console.log(`使用的 API URL: ${api}，方法: ${method}`);
+
+        await axios({
+            method: method,
+            url: api,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: payload,
+        });
+
+        if (type === 'create') {
+            handleSuccessMessage(dispatch, '創建成功', `成功建立一筆 ${tempData.space_rental_location} 的申請`);
+        } else if (type === 'edit') {
+            handleSuccessMessage(dispatch, '更新成功', `編輯編號為 ${tempData.free_space_id} 的空間成功`);
+        }
+
+        closeRentalModal(); // 成功訊息後立即關閉視窗
+        getSpaceRentals(); // 刷新租借列表
+
     } catch (error) {
-      console.error('API Error:', error);
-      handleErrorMessage(dispatch, error);
+        console.error('【API Error:】', error);
+
+        if (error.response) {
+            console.log('错误响应内容:', error.response);
+
+            let errorMessage = '請稍後再試';
+
+            if (error.response.status === 400) {
+                // 检查后端是否返回了特定的错误消息
+                errorMessage = error.response.data.message || '該空間在該時段已有被預約的紀錄';
+            }
+
+            handleErrorMessage(dispatch, {
+                response: {
+                    data: {
+                        message: errorMessage,
+                    },
+                },
+            });
+        } else {
+            handleErrorMessage(dispatch, {
+                response: {
+                    data: {
+                        message: '請稍後再試',
+                    },
+                },
+            });
+        }
     }
   };
 

@@ -27,6 +27,10 @@ function AdminSpaces() {
   const [filterValue, setFilterValue] = useState('');
   const [, dispatch] = useContext(MessageContext);
   const spaceModal = useRef(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState(null);
+  const [newStatus, setNewStatus] = useState(null);
+
 
   // 刪除處理 - 開始
   const [selectedSpaceId, setSelectedSpaceId] = useState(null); 
@@ -120,19 +124,6 @@ function AdminSpaces() {
     spaceModal.current.hide();
   };
 
-  const toggleActivationStatus = async (space) => {
-    try {
-      const updatedSpace = { ...space, freeIsActive: space.freeIsActive ? 0 : 1 };
-      await axios.put(`http://localhost:8080/spaces/${space.freeSpaceId}`, updatedSpace);
-      setSpaces((prevSpaces) =>
-        prevSpaces.map((s) =>
-          s.freeSpaceId === space.freeSpaceId ? { ...s, freeIsActive: !s.freeIsActive } : s
-        )
-      );
-    } catch (error) {
-      console.error("Error updating space status:", error);
-    }
-  };
 
   const changePage = (newPage) => {
     setPagination((prevPagination) => ({
@@ -156,6 +147,27 @@ function AdminSpaces() {
     { value: 'spaceName', label: '名稱' },
     { value: 'spaceLocation', label: '位置' },
   ];
+
+  const handleToggleClick = (space) => {
+    setSelectedSpace(space);
+    setNewStatus(space.freeIsActive ? 0 : 1);
+    setShowConfirmModal(true);
+};
+const handleStatusChange = async () => {
+  try {
+      const updatedSpace = { ...selectedSpace, freeIsActive: newStatus };
+      await axios.put(`http://localhost:8080/spaces/${selectedSpace.freeSpaceId}`, updatedSpace);
+      setSpaces((prevSpaces) =>
+        prevSpaces.map((s) =>
+          s.freeSpaceId === selectedSpace.freeSpaceId ? { ...s, freeIsActive: newStatus } : s
+        )
+      );
+      setShowConfirmModal(false);
+  } catch (error) {
+      console.error("Error updating space status:", error);
+  }
+};
+
 
   return (
     <div className='p-3'>
@@ -202,7 +214,22 @@ function AdminSpaces() {
                 <td style={{ textAlign: 'center' }}>{space.freeSpaceName}</td>
                 <td style={{ textAlign: 'center' }}>{space.freeSpaceLocation}</td>
                 <td style={{ textAlign: 'center' }}>
-                  <button style={{ backgroundColor: 'white', color: space.freeIsActive ? '#A4B6A4' : '#9B6A6A', border: '1px solid', borderColor: space.freeIsActive ? '#A4B6A4' : '#AF9797', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#E7ECEF'} onMouseLeave={(e) => e.target.style.backgroundColor = 'white'} onClick={() => toggleActivationStatus(space)}>{space.freeIsActive ? '啟用中' : '未啟用'}</button>
+                <button 
+                  style={{ 
+                    backgroundColor: 'white', 
+                    color: space.freeIsActive ? '#A4B6A4' : '#9B6A6A', 
+                    border: '1px solid', 
+                    borderColor: space.freeIsActive ? '#A4B6A4' : '#AF9797', 
+                    padding: '5px 10px', 
+                    borderRadius: '5px', 
+                    cursor: 'pointer' 
+                  }} 
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#E7ECEF'} 
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'white'} 
+                  onClick={() => handleToggleClick(space)}
+                >
+                  {space.freeIsActive ? '啟用中' : '未啟用'}
+                </button>
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <button type='button' className='btn btn-sm me-2' style={{ color: '#486484', padding: '5px 10px', border: '1px solid #486484', backgroundColor: 'white', borderRadius: '5px' }} onClick={() => toggleExpandSpace(space.freeSpaceId)}>{expandedSpaces[space.freeSpaceId] ? <i className="bi bi-caret-up"></i> : <i className="bi bi-caret-down"></i>}</button>
@@ -278,7 +305,48 @@ function AdminSpaces() {
           id={selectedSpaceId}
         />
       )}
+
+      {showConfirmModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header" style={{ backgroundColor: '#AC6A6A' }}>
+                <h5 className="modal-title text-white">【免費空間】啟用狀態變更</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  aria-label="Close" 
+                  onClick={() => setShowConfirmModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>請問是否要變更為{newStatus === 1 ? '啟用' : '未啟用'}？</p>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setShowConfirmModal(false)}
+                >
+                  取消
+                </button>
+                <button 
+                  type="button" 
+                  className="btn" 
+                  style={{ backgroundColor: '#AC6A6A', color: 'white' }} 
+                  onClick={handleStatusChange}
+                >
+                  確認
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
+    
   );
 }
 

@@ -171,12 +171,16 @@ function AdminManageDocuments() {
         <tbody>
           {documents.map((document) => (
             <tr key={document.documentId}>
-              <td style={{ textAlign: 'center', width: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{document.documentId}</td>              
+              <td style={{ textAlign: 'center', width: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{document.documentId}</td>
               <td style={{ textAlign: 'center' }}>{document.documentName}</td>
               <td style={{ textAlign: 'center' }}>
-                <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">
-                  查看文件
-                </a>
+                {document.documentUrl.length > 15 ? (
+                  <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">
+                    查看文件
+                  </a>
+                ) : (
+                  document.documentUrl
+                )}
               </td>
               <td style={{ textAlign: 'center' }}>{new Date(document.documentLastModifiedDate).toLocaleString()}</td>
               <td style={{ textAlign: 'center' }}>
@@ -186,6 +190,7 @@ function AdminManageDocuments() {
             </tr>
           ))}
         </tbody>
+
       </table>
       <Pagination pagination={pagination} changePage={changePage} />
     </div>
@@ -194,3 +199,7 @@ function AdminManageDocuments() {
 }
 
 export default AdminManageDocuments;
+
+                // {/* <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">
+                //   查看文件
+                // </a> */}

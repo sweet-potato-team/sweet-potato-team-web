@@ -34,16 +34,37 @@ function Login() {
     }
   };
 
+  const handleBack = () => {
+    navigate('/');
+  };
+
   return (
     <div 
       className="d-flex flex-column justify-content-center align-items-center vh-100"
       style={{
-        position: 'relative', // Added to position the ::before element
-        overflow: 'hidden',   // Ensures the blur effect does not exceed the boundaries
+        position: 'relative',
+        overflow: 'hidden',
         height: '100vh',
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
       }}
     >
+<i 
+  className="bi bi-caret-left-fill" 
+  onClick={handleBack}
+  style={{
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    color: 'white',
+    fontSize: '24px',
+    cursor: 'pointer',
+    fontStyle: 'normal' // This will override the default italic style of the <i> tag
+  }}
+>
+  Back
+</i>
+
+
       <div 
         style={{
           position: 'absolute',
@@ -51,18 +72,13 @@ function Login() {
           left: 0,
           right: 0,
           bottom: 0,
-          
-          backgroundImage: 'url(https://i.imgur.com/UWWokJe.jpeg)',  // 公告欄
-          // backgroundImage: "url(https://i.imgur.com/FYmOyAO.jpeg)", // 水藍色電腦
-          // backgroundImage: "url(https://i.imgur.com/bJLTkPj.jpeg)",  // 有鋼筆
-
+          backgroundImage: 'url(https://i.imgur.com/UWWokJe.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'blur(2px)', // Apply blur effect to the background image
+          filter: 'blur(2px)',
           zIndex: -1,
         }}
       />
-
 
       <div
         className='p-5'
@@ -77,6 +93,7 @@ function Login() {
           管理員帳號登入
         </h2>
 
+        {/* Render the login error message conditionally */}
         <div
           className={`alert alert-danger ${loginState.message ? 'd-block' : 'd-none'}`}
           role='alert'
@@ -85,6 +102,7 @@ function Login() {
           {loginState.message}
         </div>
 
+        {/* Email and Password Input Fields */}
         <div className='mb-4 d-flex align-items-center'>
           <label htmlFor='email' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#415A77', marginRight: '10px', width: '80px' }}>
             帳號：
@@ -114,6 +132,7 @@ function Login() {
           />
         </div>
 
+        {/* Submit Button */}
         <button
           type='button'
           className='btn'
@@ -134,7 +153,7 @@ function Login() {
           }}
           onMouseOut={(e) => {
             e.target.style.backgroundColor = '#D3E9FF';
-            e.target.style.color = '#415A77';
+            e.target.style.color='#415A77';
           }}
         >
           登入
