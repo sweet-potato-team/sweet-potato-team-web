@@ -6,13 +6,16 @@ import AdminSpaces from './pages/admin/AdminSpaces';
 import AdminPaidSpaces from './pages/admin/AdminPaidSpaces';
 import Home from './pages/front/Home';
 import Spaces from './pages/front/Spaces';
-// import PaidSpaces from './pages/front/PaidSpaces';
+import PaidSpaces from './pages/front/PaidSpaces';
 import SpacesViewFreeTimes from './pages/front/SpacesViewFreeTimes';
 
 
 import SpaceRental from './pages/front/SpaceRental';
 import AdminSpaceRentals from './pages/admin/AdminSpaceRentals';
-
+import AdminPaidSpaceRentals from './pages/admin/AdminPaidSpaceRentals';
+import AdminManageDocuments from './pages/admin/AdminManageDocuments';
+import AdminManageCharges from './pages/admin/AdminManageCharges';
+import AdminManageFreeTimes from './pages/admin/AdminManageFreeTimes';
 function App() {
 
   return (
@@ -20,7 +23,7 @@ function App() {
       <Routes>
         {/* 直接將這些頁面掛載在 '/' 路徑下 */}
         <Route path='/' element={<Home />}></Route>
-          {/* <Route path='paid_spaces' element={<PaidSpaces />}></Route> */}
+          <Route path='paid_spaces' element={<PaidSpaces />}></Route>
           <Route path='spaces' element={<Spaces />}></Route>
           <Route path='spaces/view_free_times' element={<SpacesViewFreeTimes />}></Route>
           <Route path='space_rentals' element={<SpaceRental />}></Route>
@@ -29,8 +32,11 @@ function App() {
         <Route path='/admin' element={<Dashboard />}>                   
           <Route path='space_rentals' element={<AdminSpaceRentals />}></Route>
           <Route path='spaces' element={<AdminSpaces />}></Route>
-          {/* <Route path='paid_spaces' element={<AdminPaidSpaces />}></Route> */}
-
+          <Route path='paid_spaces' element={<AdminPaidSpaces />}></Route>
+          <Route path='paid_space_rentals' element={<AdminPaidSpaceRentals />}></Route>
+          <Route path='manage_documents' element={<AdminManageDocuments />}></Route>
+          <Route path='manage_charges' element={<AdminManageCharges />}></Route>
+          <Route path='manage_free_times' element={<AdminManageFreeTimes />}></Route>
         </Route>
       </Routes>
     </div>
