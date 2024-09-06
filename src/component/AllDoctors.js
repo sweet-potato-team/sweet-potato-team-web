@@ -6,7 +6,7 @@ const AllDoctors = () => {
   const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/doctors')
+    axios.get('http://localhost:8080/api/doctors')
       .then(response => setDoctors(response.data))
       .catch(error => {
         console.error(error);
@@ -23,7 +23,7 @@ const AllDoctors = () => {
   const containerStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     padding: '20px',
   };
 

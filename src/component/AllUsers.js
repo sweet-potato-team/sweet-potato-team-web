@@ -6,7 +6,7 @@ const AllUsers = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/sysUsers')
+    axios.get('http://localhost:8080/api/sysUsers')
       .then(response => setUsers(response.data))
       .catch(error => {
         console.error(error);
@@ -20,17 +20,10 @@ const AllUsers = () => {
       });
   }, []);
 
-
-  useEffect(() => {
-    axios.get('/api/sysUsers')
-      .then(response => setUsers(response.data))
-      .catch(error => console.error(error));
-  }, []);
-
   const containerStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     padding: '20px',
   };
 
@@ -39,7 +32,7 @@ const AllUsers = () => {
       {users.map(user => (
         <Card
           key={user.sysUserId}
-          imageSrc="https://plus.unsplash.com/premium_photo-1661600719400-d537c4981818?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGF0aWVudHxlbnwwfHwwfHx8MA%3D%3D"  // 這裡替換為實際圖片路徑
+          imageSrc="https://plus.unsplash.com/premium_photo-1661600719400-d537c4981818?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGF0aWVudHxlbnwwfHwwfHx8MA%3D%3D" 
           title={user.userName}
           subtitle={user.userGender}
           description={`${user.userAge} 歲`}
