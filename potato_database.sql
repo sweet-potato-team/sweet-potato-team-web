@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Emotion_Analysis` (
   `class_attitude_per`     FLOAT NOT NULL,                        -- 態度百分比
   `class_sensitivity_per`  FLOAT NOT NULL,                        -- 敏感性百分比
   PRIMARY KEY (`emo_id`),
-  FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`)
+
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Depression_scale_results】抑鬱症量表結果資料表
@@ -77,7 +77,6 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Depression_scale_results` (
   `state_23`        INT UNSIGNED NOT NULL,                 -- 狀態 23
   `state_24`        INT UNSIGNED NOT NULL,                 -- 狀態 24
   PRIMARY KEY (`scale_id`),
-  FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`)
 ) ENGINE = InnoDB;
 
 
@@ -89,7 +88,6 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Doctors` (
   `doctor_link_user_date`  DATETIME NOT NULL,                     -- 建立連結日
   `doctor_picture_url`     VARCHAR(255) NULL,                     -- 醫生照片
   PRIMARY KEY (`doctor_id`),
-  FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`)
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Ads】廣告資料表
@@ -115,30 +113,24 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Drug_Bag_Infos` (
   `drug_med_time`          DATETIME NOT NULL,                     -- 藥品用藥時間
   `drug_med_next_time`     DATETIME NULL,                         -- 下次用藥時間
   PRIMARY KEY (`drug_bag_id`),
-  UNIQUE INDEX `drug_bag_id_UNIQUE` (`drug_bag_id` ASC),
-  INDEX `tb_Drug_to_user_id_idx` (`sys_user_id` ASC),
-  CONSTRAINT `tb_Drug_to_user_id`
-    FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
--- 【temp_tb_Alert_Reminders】提醒時間表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Reminders` (
-  `sys_user_id`          INT UNSIGNED NOT NULL,     -- 使用者系統 ID【外+主】
-  `drug_bag_id`          INT UNSIGNED NOT NULL,     -- 藥袋ID【外】
-  `user_dispense_date`   DATETIME NOT NULL,         -- 配藥日期(調劑時間)
-  `alert_1`              DATETIME NULL,             -- 提醒(可NULL)
-  `alert_2`              DATETIME NULL,             -- 提醒(可NULL)
-  `alert_3`              DATETIME NULL,             -- 提醒(可NULL)
-  `alert_again_1`        DATETIME NULL,             -- 提醒twice(可NULL)
-  `alert_again_2`        DATETIME NULL,             -- 提醒twice(可NULL)
-  `alert_again_3`        DATETIME NULL,             -- 提醒twice(可NULL)
-  `alert_update_time`    DATETIME NOT NULL,         -- 提醒更新時間
-  PRIMARY KEY (`sys_user_id`, `drug_bag_id`),
-  FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`),
-  FOREIGN KEY (`drug_bag_id`) REFERENCES `temp_tb_Drug_Bag_Infos` (`drug_bag_id`)
-) ENGINE = InnoDB;
+-- -- 【temp_tb_Alert_Reminders】提醒時間表
+-- CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Reminders` (
+--   `sys_user_id`          INT UNSIGNED NOT NULL,     -- 使用者系統 ID【外+主】
+--   `drug_bag_id`          INT UNSIGNED NOT NULL,     -- 藥袋ID【外】
+--   `user_dispense_date`   DATETIME NOT NULL,         -- 配藥日期(調劑時間)
+--   `alert_1`              DATETIME NULL,             -- 提醒(可NULL)
+--   `alert_2`              DATETIME NULL,             -- 提醒(可NULL)
+--   `alert_3`              DATETIME NULL,             -- 提醒(可NULL)
+--   `alert_again_1`        DATETIME NULL,             -- 提醒twice(可NULL)
+--   `alert_again_2`        DATETIME NULL,             -- 提醒twice(可NULL)
+--   `alert_again_3`        DATETIME NULL,             -- 提醒twice(可NULL)
+--   `alert_update_time`    DATETIME NOT NULL,         -- 提醒更新時間
+--   PRIMARY KEY (`sys_user_id`, `drug_bag_id`),
+--   FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`),
+--   FOREIGN KEY (`drug_bag_id`) REFERENCES `temp_tb_Drug_Bag_Infos` (`drug_bag_id`)
+-- ) ENGINE = InnoDB;
 
 -- 【temp_tb_Alert_Records】提醒紀錄表
 CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Records` (
@@ -150,8 +142,6 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Records` (
   `record_state_3`      TINYINT UNSIGNED,           -- 使用者在該鬧鐘的狀態，可NULL
   `drug_sideeffect`     VARCHAR(100) NULL,          -- 藥品副作用
   PRIMARY KEY (`sys_user_id`, `drug_bag_id`),
-  FOREIGN KEY (`sys_user_id`) REFERENCES `temp_tb_Users` (`sys_user_id`),
-  FOREIGN KEY (`drug_bag_id`) REFERENCES `temp_tb_Drug_Bag_Infos` (`drug_bag_id`)
 ) ENGINE = InnoDB;
 
 

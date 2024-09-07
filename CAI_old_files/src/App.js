@@ -1,40 +1,81 @@
-import { Routes, Route} from 'react-router-dom';
-
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LineLoginPage from './pages/front/LineLoginPage';
 import Login from './pages/Login';
-import Dashboard from './pages/admin/Dashboard';
-import AdminSpaces from './pages/admin/AdminSpaces';
-import AdminPaidSpaces from './pages/admin/AdminPaidSpaces';
 import Home from './pages/front/Home';
-import Spaces from './pages/front/Spaces';
-// import PaidSpaces from './pages/front/PaidSpaces';
-import SpacesViewFreeTimes from './pages/front/SpacesViewFreeTimes';
-
-
-import SpaceRental from './pages/front/SpaceRental';
-import AdminSpaceRentals from './pages/admin/AdminSpaceRentals';
+import AdminPage from './pages/admin/AdminPage'; 
+import AllDoctors from './components/AllDoctors'; 
+import AllUsers from './components/AllUsers';     
 
 function App() {
-
   return (
-    <div className='App'>
+    <div className="App">
       <Routes>
-        {/* 直接將這些頁面掛載在 '/' 路徑下 */}
-        <Route path='/' element={<Home />}></Route>
-          {/* <Route path='paid_spaces' element={<PaidSpaces />}></Route> */}
-          <Route path='spaces' element={<Spaces />}></Route>
-          <Route path='spaces/view_free_times' element={<SpacesViewFreeTimes />}></Route>
-          <Route path='space_rentals' element={<SpaceRental />}></Route>
+        <Route path="/" element={<Home />} />
         
-        <Route path='/login' element={<Login />}></Route>
-        <Route path='/admin' element={<Dashboard />}>                   
-          <Route path='space_rentals' element={<AdminSpaceRentals />}></Route>
-          <Route path='spaces' element={<AdminSpaces />}></Route>
-          {/* <Route path='paid_spaces' element={<AdminPaidSpaces />}></Route> */}
+        {/* 允許沒有 sys_user_id 的 LineLoginPage 路由 */}
+        <Route path="/LineLoginPage" element={<LineLoginPage />} />
 
+        {/* 管理員頁面 */}
+        <Route path="/admin" element={<AdminPage />}>
+          <Route index element={<Navigate to="/admin/allDoctors" />} />
+          <Route path="allDoctors" element={<AllDoctors />} />
+          <Route path="allUsers" element={<AllUsers />} />
         </Route>
+        
+        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
   );
 }
 
 export default App;
+
+
+
+
+
+// import { Routes, Route, Navigate } from 'react-router-dom';
+// import LineLoginPage from './pages/front/LineLoginPage';
+// import DepressionScaleData from './pages/front/DepressionScaleData';
+// import EmotionAnalysis from './pages/front/EmotionAnalysis';
+// import MedicationRecords from './pages/front/MedicationRecords';
+// import UserInfo from './pages/front/UserInfo';
+// import Homepage from './pages/front/Homepage';
+// import Login from './pages/Login';
+// import Home from './pages/front/Home';
+// import AdminPage from './pages/admin/AdminPage'; 
+// import AllDoctors from './components/AllDoctors'; 
+// import AllUsers from './components/AllUsers';     
+
+// function App() {
+//   return (
+//     <div className="App">
+//       <Routes>
+//         <Route path="/" element={<Home />} />
+        
+//         {/* 允許沒有 sys_user_id 的 LineLoginPage 路由 */}
+//         <Route path="/LineLoginPage" element={<LineLoginPage />} />
+
+//         {/* 包含 sys_user_id 的路由 */}
+//         <Route path="/LineLoginPage/:sys_user_id/*" element={<LineLoginPage />}>
+//           <Route path="Homepage" element={<Homepage />} />  {/* 對應 HomePage */}
+//           <Route path="Depression" element={<DepressionScaleData />} />
+//           <Route path="Emotion" element={<EmotionAnalysis />} />
+//           <Route path="Records" element={<MedicationRecords />} />
+//           <Route path="Info" element={<UserInfo />} />
+//         </Route>
+
+//         {/* 管理員頁面 */}
+//         <Route path="/admin" element={<AdminPage />}>
+//           <Route index element={<Navigate to="/admin/allDoctors" />} />
+//           <Route path="allDoctors" element={<AllDoctors />} />
+//           <Route path="allUsers" element={<AllUsers />} />
+//         </Route>
+        
+//         <Route path="/login" element={<Login />} />
+//       </Routes>
+//     </div>
+//   );
+// }
+
+// export default App;
