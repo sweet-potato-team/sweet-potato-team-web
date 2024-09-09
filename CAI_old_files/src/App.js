@@ -14,6 +14,7 @@ function App() {
         
         {/* 允許沒有 sys_user_id 的 LineLoginPage 路由 */}
         <Route path="/LineLoginPage" element={<LineLoginPage />} />
+        <Route path="/LineLoginPage/:sys_user_id/*" element={<LineLoginPage />} />
 
         {/* 管理員頁面 */}
         <Route path="/admin" element={<AdminPage />}>

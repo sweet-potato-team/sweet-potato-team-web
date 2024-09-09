@@ -3,7 +3,7 @@ import LineLoginButton from '../../components/LineLoginButton';
 
 function Home() {
   const handleLineLogin = () => {
-    const clientId = '2004253998';
+    const clientId = '2006291751';
     const redirectUri = 'http://localhost:3000/LineLoginPage';
     let link = 'https://access.line.me/oauth2/v2.1/authorize?';
     link += 'response_type=code';
