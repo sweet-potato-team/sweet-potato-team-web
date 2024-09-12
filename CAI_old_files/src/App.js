@@ -8,13 +8,19 @@ import AllUsers from './components/AllUsers';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{ width: '100%' }}>
       <Routes>
         <Route path="/" element={<Home />} />
         
         {/* 允許沒有 sys_user_id 的 LineLoginPage 路由 */}
         <Route path="/LineLoginPage" element={<LineLoginPage />} />
         <Route path="/LineLoginPage/:sys_user_id/*" element={<LineLoginPage />} />
+        <Route path="/LineLoginPage/:userId" element={<LineLoginPage />} />
+        {/* <Route path="/LineLoginPage/:userId" element={<LineLoginPage />} /> */}
+
+
+        {/* <Route path="/LineLoginPage/:userId" component={LineLoginPage} /> */}
+
 
         {/* 管理員頁面 */}
         <Route path="/admin" element={<AdminPage />}>

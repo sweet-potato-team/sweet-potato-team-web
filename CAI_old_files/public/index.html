@@ -7,6 +7,46 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+
+    <!-- Load wordcloud2.js dynamically -->
+    <script>
+      const script = document.createElement("script");
+      script.src = "%PUBLIC_URL%/wordcloud2.js?v=" + Date.now();
+      document.head.appendChild(script);
+    </script>
+
+    <!-- Load jieba.js from CDN -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/jieba-js@1.0.0"></script> -->
+
+
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+<!-- <script type="module">
+  import jieba from 'https://cdn.jsdelivr.net/npm/jieba@1.0.0/+esm';
+  window.jieba = jieba; // 將 jieba 暴露到全局 window 中
+</script> -->
+<!-- <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="%PUBLIC_URL%/wordcloud2.js?v=${Date.now()}"></script>
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Web site created using create-react-app"
@@ -42,4 +82,4 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-</html>
+</html> -->

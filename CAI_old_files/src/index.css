@@ -20,6 +20,76 @@ body {
   font-weight: normal;
   font-style: normal;
 }
+@media (max-width: 768px) {
+  .userPage {
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px; 
+  }
+
+  .infoSection {
+    grid-template-columns: 1fr;
+  }
+
+  .infoBox {
+    width: 100%; 
+  }
+}
+
+
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+  height: 500px; /* 增加高度以包含標題和圖表 */
+  background-color: #EFEBE6; /* 設定背景顏色 */
+  padding: 10px; /* 統一內邊距以避免內容擠壓 */
+}
+
+.scroll-container::-webkit-scrollbar {
+  height: 12px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #F0EDE5;
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #B7A58F;
+  border-radius: 10px;
+  border: 2px solid #F0EDE5;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:active {
+  background-color: #6B5E3E;
+}
+
+/* 統一圖表容器的樣式，確保標題和圖表都被框架包含 */
+.chart-container {
+  flex: 0 0 auto;
+  min-width: 300px;
+  /* background-color: #F0EDE5;  */
+  height: 90%;
+  margin-bottom: 10px; /* 為了避免��表����標題和��表 */
+  padding: 20px; /* 增加內邊距確保標題和圖表有空間 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 讓標題和圖表從上到下排列 */
+  align-items: center;
+}
+
+/* 調整標題的樣式，確保標題不擠壓圖表 */
+.chart-container h3 {
+
+  padding: 10px;
+  font-size: 24px; /* 設置適當的字體大小 */
+  font-weight: bold;
+  color: #574938;
+  background-color: #EFEBE6; /* 確保標題的背景色與容器背景一致 */
+  width: 100%; /* 讓標題占滿寬度 */
+  text-align: center; /* 將標題居中 */
+}
 
 
 /* body {
