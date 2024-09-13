@@ -71,7 +71,7 @@ body {
   min-width: 300px;
   /* background-color: #F0EDE5;  */
   height: 90%;
-  margin-bottom: 10px; /* 為了避免��表����標題和��表 */
+  /* margin-bottom: -10px;  */
   padding: 20px; /* 增加內邊距確保標題和圖表有空間 */
   display: flex;
   flex-direction: column;
@@ -90,6 +90,25 @@ body {
   width: 100%; /* 讓標題占滿寬度 */
   text-align: center; /* 將標題居中 */
 }
+.empty-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* 讓訊息占滿 scroll-container 的寬度 */
+  height: 100%; /* 讓訊息占滿 scroll-container 的高度 */
+}
+
+.empty-message h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #574938;
+  background-color: #F0EDE5; /* 設置訊息背景顏色 */
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+
 
 
 /* body {

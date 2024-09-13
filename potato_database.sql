@@ -1,5 +1,5 @@
 -- 【temp_tb_Users】使用者資料表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Users` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Users` (
   `sys_user_id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 主鍵
   `user_line_id`           VARCHAR(100) NOT NULL,                -- 使用者LINE ID
   `user_name`              VARCHAR(100) NOT NULL,                -- 使用者名稱
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Users` (
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Emotion_Analysis】情緒分析資料表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Emotion_Analysis` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Emotion_Analysis` (
   `emo_id`                 INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 主鍵
   `sys_user_id`            INT UNSIGNED NOT NULL,                 -- 使用者系統ID
   `session_id`             VARCHAR(100) NOT NULL,                 -- 會話ID
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Emotion_Analysis` (
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Depression_scale_results】抑鬱症量表結果資料表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Depression_scale_results` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Depression_scale_results` (
   `scale_id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 測試ID
   `sys_user_id`     INT UNSIGNED NOT NULL,                 -- 使用者系統ID
   `test_datetime`   DATETIME NOT NULL,                     -- 測試日期時間
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Depression_scale_results` (
 
 
 -- 【temp_tb_Doctors】醫師資料表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Doctors` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Doctors` (
   `doctor_id`              INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 醫師ID
   `sys_user_id`            INT UNSIGNED NOT NULL,                 -- 使用者系統ID【外】
   `doctor_name`            VARCHAR(100) NOT NULL,                 -- 醫師名稱
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Doctors` (
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Ads】廣告資料表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Ads` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Ads` (
   `ad_id`                  INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 廣告ID
   `ad_cat`                 VARCHAR(100) NOT NULL,                 -- 廣告分類
   `ad_url`                 VARCHAR(255) NOT NULL,                 -- 廣告圖片連結
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Ads` (
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Drug_Bag_Infos】藥袋資訊表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Drug_Bag_Infos` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Drug_Bag_Infos` (
   `drug_bag_id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 藥袋ID
   `sys_user_id`            INT UNSIGNED NOT NULL,                 -- 系統使用者ID
   `drug_name`              VARCHAR(100) NOT NULL,                 -- 藥品名稱
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Drug_Bag_Infos` (
 ) ENGINE = InnoDB;
 
 -- -- 【temp_tb_Alert_Reminders】提醒時間表
--- CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Reminders` (
+-- CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Alert_Reminders` (
 --   `sys_user_id`          INT UNSIGNED NOT NULL,     -- 使用者系統 ID【外+主】
 --   `drug_bag_id`          INT UNSIGNED NOT NULL,     -- 藥袋ID【外】
 --   `user_dispense_date`   DATETIME NOT NULL,         -- 配藥日期(調劑時間)
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Drug_Bag_Infos` (
 -- ) ENGINE = InnoDB;
 
 -- 【temp_tb_Alert_Records】提醒紀錄表
-CREATE TABLE IF NOT EXISTS `cloud-db`.`temp_tb_Alert_Records` (
+CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Alert_Records` (
   `sys_user_id`         INT UNSIGNED NOT NULL,      -- 使用者系統 ID【外+主】
   `drug_bag_id`         INT UNSIGNED NOT NULL,      -- 藥袋ID【外】
   `record_alert_date`   DATETIME NOT NULL,          -- 紀錄有提醒的日期

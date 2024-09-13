@@ -38,7 +38,7 @@ function WordCloudComponent({ wordList, minFrequency = 2 }) {
         }
     }, [wordList, minFrequency]);
 
-    return <div ref={wordCloudRef} style={{ minWidth: '400px',width: '100%', height: '400px', backgroundColor: '#ffffff' }} />;
+    return <div ref={wordCloudRef} style={{ minWidth: '400px',width: '100%', height: '400px' }} />;
 }
 
 export default WordCloudComponent;

@@ -3,25 +3,21 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import moment from 'moment';
 
-// 註冊需要的插件
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function LineChartComponent({ labels, totalScores }) {
-  console.log("LineChartComponent labels:", labels); // 檢查 labels
-  console.log("LineChartComponent totalScores:", totalScores); // 檢查 totalScores
+  console.log("LineChartComponent labels:", labels); 
+  console.log("LineChartComponent totalScores:", totalScores);
 
-  // 確認是否所有日期都在同一年
   const allInSameYear = labels.every(label => new Date(label).getFullYear() === new Date(labels[0]).getFullYear());
   const year = new Date(labels[0]).getFullYear();
 
-  // 格式化日期，去除時間部分，並在圖表最左側顯示年份
   const formattedLabels = labels.map((label, index) => {
     const date = new Date(label);
-    const formattedDate = moment(date).format('MM-DD'); // 僅顯示月日
-    return index === 0 && allInSameYear ? `${year} ${formattedDate}` : formattedDate; // 如果是同一年，第一個日期顯示年份
+    const formattedDate = moment(date).format('MM-DD'); 
+    return index === 0 && allInSameYear ? `${year} ${formattedDate}` : formattedDate; 
   });
 
-  // 排序同一天的數據，確保正確順序
   const sortedData = totalScores.map((score, index) => ({ date: new Date(labels[index]), score }))
     .sort((a, b) => a.date - b.date)
     .map(item => item.score);
@@ -29,9 +25,10 @@ function LineChartComponent({ labels, totalScores }) {
   const data = {
     labels: formattedLabels,
     datasets: [{
-      data: sortedData,  // 使用排序後的數據
-      borderColor: 'rgba(75, 192, 192, 1)',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      data: sortedData,
+      borderColor: 'rgba(237,189,130,0.8)',
+      backgroundColor: 'rgba(244,214,177,0.4)',
+      pointBackgroundColor: '#EDBD82',  // Set point color
       borderWidth: 2,
       fill: true
     }]
@@ -42,21 +39,36 @@ function LineChartComponent({ labels, totalScores }) {
       x: {
         title: {
           display: true,
-          text: '日期(月-日)'  // X軸標題變更為 "日期(月-日)"
+          text: '日期(月-日)',
+          font: {
+            size: 16,
+            family: 'GenSenRounded'  // 使用你定義的字體
+          }
+        },
+        ticks: {
+          font: {
+            size: 14,
+            family: 'GenSenRounded'  // 使用你定義的字體
+          }
         }
       },
       y: {
         min: 0,
-        max: 45,  // 固定 Y 軸範圍 0 到 45
+        max: 40,
         ticks: {
-          stepSize: 5,  // 每 5 一個間距
-          callback: function(value) {
-            return value; // 顯示每 5 的倍數
+          stepSize: 10,
+          font: {
+            size: 14,
+            family: 'GenSenRounded'  // 使用你定義的字體
           }
         },
         title: {
           display: true,
-          text: '總分'  // Y軸標題變更為 "總分"
+          text: '總分',
+          font: {
+            size: 16,
+            family: 'GenSenRounded'  // 使用你定義的字體
+          }
         }
       }
     },
@@ -64,24 +76,34 @@ function LineChartComponent({ labels, totalScores }) {
       tooltip: {
         callbacks: {
           label: function(tooltipItem) {
-            return `分數 : ${tooltipItem.raw}`;  // hover 時顯示 "分數 : XX"
+            return `分數 : ${tooltipItem.raw}`; 
           }
         }
       },
       legend: {
-        display: false // 隱藏圖例 "Total Score Over Time"
+        display: false 
       },
       title: {
-        display: false,  // 隱藏標題 "Total Score Progression Over Time"
+        display: false,
       }
     },
     responsive: true,
-    maintainAspectRatio: false  // 允許自定義高度和寬度
+    maintainAspectRatio: false 
+  };
+
+  // 动态设置图表宽度，根据数据量调整宽度
+  const getChartWidth = () => {
+    const baseWidth = 150; // 基础宽度
+    const extraWidthPerPoint = 40; // 每个点的额外宽度
+    const totalWidth = baseWidth + labels.length * extraWidthPerPoint;
+    return `${totalWidth}px`;
   };
 
   return (
-    <div style={{ width: '100%', height: '500px', padding: '20px', borderRadius: '10px' }}>
-      <Line data={data} options={options} />
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+      <div style={{ marginTop:'10px', width: getChartWidth(), height: '320px', borderRadius: '10px' }}>
+        <Line data={data} options={options} />
+      </div>
     </div>
   );
 }
