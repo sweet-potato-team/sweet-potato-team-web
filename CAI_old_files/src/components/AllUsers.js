@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Card from './Card';
+import Loading from '../components/Loading'; // 引入 Loading 組件
+import '../backpage.css';
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // 加入 Loading 狀態
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/sysUsers')
-      .then(response => setUsers(response.data))
-      .catch(error => {
+    const fetchUsers = async () => {
+      setIsLoading(true); // 開始 Loading
+      try {
+        const response = await axios.get('http://localhost:8080/api/sysUsers');
+        setUsers(response.data);
+      } catch (error) {
         console.error(error);
         // 當請求失敗時，設置一筆假資料
         setUsers([{
@@ -17,18 +23,22 @@ const AllUsers = () => {
           userGender: '男',
           userAge: 30
         }]);
-      });
+      } finally {
+        setTimeout(() => setIsLoading(false), 500); // 延遲隱藏 Loading
+      }
+    };
+
+    fetchUsers();
   }, []);
 
-  const containerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    // justifyContent: 'space-between',
-    padding: '20px',
-  };
+
+
+  if (isLoading) {
+    return <Loading isLoading={isLoading} />; // Loading 組件
+  }
 
   return (
-    <div style={containerStyle}>
+    <div className='listContainer'>
       {users.map(user => (
         <Card
           key={user.sysUserId}

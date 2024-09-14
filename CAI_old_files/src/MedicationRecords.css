@@ -1,0 +1,84 @@
+.scroll-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 500px; /* 限制表格高度 */
+  min-width: 600px; /* 設置最小寬度為600px */
+  width: 100%; /* 寬度隨著視窗變化 */
+  max-width: 1200px; /* 設置最大寬度，防止過大 */
+  margin: 0 auto; /* 使容器水平居中 */
+  padding: 0; /* 移除內邊距，避免表頭和表格內容之間有間距 */
+  background-color: #EFEBE6;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 外陰影效果 */
+}
+
+
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse; /* 移除單元格之間的間距 */
+}
+
+.styled-table th {
+  background-color: #B7A58F; /* 更改標題背景顏色 */
+  color: #fdf9f4;
+  padding: 10px;
+  font-size: 18px;
+  vertical-align: middle; /* 垂直置中 */
+  text-align: center; /* 水平置中 */
+  position: sticky;
+  top: 0; /* 固定表頭 */
+  z-index: 1;
+  font-weight: normal; /* 設置字體不加粗 */
+}
+
+
+.styled-table td {
+  background-color: #EFEBE6;
+  padding: 10px;
+  text-align: center;
+  color: #574938; /* 內文顏色 */
+  transition: background-color 0.3s ease;
+}
+
+/* Hover 效果應用於整列 */
+.styled-table tr:hover td {
+  background-color: #D3C8BB; /* 滑鼠懸停時，整列背景顏色改變 */
+}
+
+/* 調整滾動條的樣式 */
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #F0EDE5;
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #B7A58F;
+  border-radius: 10px;
+  border: 2px solid #F0EDE5;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:active {
+  background-color: #6B5E3E;
+}
+
+/* 說明圖示區塊的樣式 */
+.icon-legend {
+  display: flex;
+  justify-content: space-evenly; /* 等距排列 */
+  align-items: center;
+  margin-top: 15px;
+  font-size: 16px;
+  color: #574938;
+  background-color: #EFEBE6;
+}
+
+.icon-legend p {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}

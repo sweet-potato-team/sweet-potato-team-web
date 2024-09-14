@@ -1,0 +1,27 @@
+  
+  /* Media queries */
+  @media (max-width: 400px) {
+    .adminContainer {
+      width: 200%;
+    }
+    .listContainer {
+        width: 200%;
+      }
+  }
+  
+  @media (min-width: 401px) {
+    .adminContainer {
+      width: 100%;
+    }
+    .listContainer {
+        width: 100%;
+      }
+  }
+  
+
+  .listContainer {
+    display: 'flex';
+    flex-wrap: 'wrap';
+    padding: '40px';
+  }
+  

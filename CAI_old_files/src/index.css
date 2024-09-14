@@ -1,10 +1,55 @@
-/* body {
+html, body {
+  /* height: 100%; */
   margin: 0;
-  font-family: 'Kosugi Maru', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-} */
+  padding: 0;
+  overflow: auto; /* 允許滾動 */
+
+}
+
+/* 當螢幕大於 1535px 時進行等比例縮放 */
+@media screen and (min-width: 1535px) {
+  .App {
+    transform: scale(calc(100vw / 1535));
+    transform-origin: top left;
+  }
+}
+
+/* 調整不同螢幕尺寸下的寬度和高度 */
+@media screen and (max-width: 1535px) and (min-width: 1201px) {
+  .App {
+    width: 1200px;
+    /* height: 750px; */
+    overflow: visible;
+  }
+}
+
+@media screen and (max-width: 1200px) and (min-width: 801px) {
+  .App {
+    width: 800px;
+    /* height: 750px; */
+    overflow: visible;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .App {
+    width: 800px;
+    /* height: 750px; */
+    overflow: visible;
+  }
+}
+
+/* 特定元素的媒體查詢設定 */
+@media (max-width: 600px) {
+  .modal-dialog {
+    width: 100vw;  
+    margin: 0;
+  }
+}
+
+
+
+
 body {
   margin: 0;
   font-family: 'GenSenRounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -34,35 +79,6 @@ body {
   .infoBox {
     width: 100%; 
   }
-}
-
-
-.scroll-container {
-  display: flex;
-  overflow-x: auto;
-  width: 100%;
-  height: 500px; /* 增加高度以包含標題和圖表 */
-  background-color: #EFEBE6; /* 設定背景顏色 */
-  padding: 10px; /* 統一內邊距以避免內容擠壓 */
-}
-
-.scroll-container::-webkit-scrollbar {
-  height: 12px;
-}
-
-.scroll-container::-webkit-scrollbar-track {
-  background-color: #F0EDE5;
-  border-radius: 10px;
-}
-
-.scroll-container::-webkit-scrollbar-thumb {
-  background-color: #B7A58F;
-  border-radius: 10px;
-  border: 2px solid #F0EDE5;
-}
-
-.scroll-container::-webkit-scrollbar-thumb:active {
-  background-color: #6B5E3E;
 }
 
 /* 統一圖表容器的樣式，確保標題和圖表都被框架包含 */
@@ -110,16 +126,6 @@ body {
 
 
 
-
-/* body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-} */
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -130,3 +136,4 @@ code {
   background-color: #4b5f6c !important;
   color: white !important;
 }
+

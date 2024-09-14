@@ -25,7 +25,7 @@ function Login() {
       document.cookie = `hexToken=${token}; expires=${new Date(new Date().getTime() + 3600 * 1000).toUTCString()};`;
   
       if (res.data.success) {
-        navigate('/admin/spaces');
+        navigate('/admin');
       } else {
         setLoginState({ message: '登入失敗，請重試。' });
       }
@@ -48,22 +48,21 @@ function Login() {
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
       }}
     >
-<i 
-  className="bi bi-caret-left-fill" 
-  onClick={handleBack}
-  style={{
-    position: 'absolute',
-    top: '20px',
-    left: '20px',
-    color: 'white',
-    fontSize: '24px',
-    cursor: 'pointer',
-    fontStyle: 'normal' // This will override the default italic style of the <i> tag
-  }}
->
-  Back
-</i>
-
+      <i 
+        className="bi bi-caret-left-fill" 
+        onClick={handleBack}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          color: '#EFEBE6', // 更改為 #705E48
+          fontSize: '24px',
+          cursor: 'pointer',
+          fontStyle: 'normal'
+        }}
+      >
+        Back
+      </i>
 
       <div 
         style={{
@@ -72,7 +71,7 @@ function Login() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(https://i.imgur.com/UWWokJe.jpeg)',
+          backgroundImage: 'url(https://i.imgur.com/vpXJVS3.jpeg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(2px)',
@@ -89,7 +88,7 @@ function Login() {
           textAlign: 'center',
         }}
       >
-        <h2 className="fw-bold" style={{ fontSize: '2.5rem', color: '#415A77', marginBottom: '40px' }}>
+        <h2 className="fw-bold" style={{ fontSize: '2.5rem', color: '#705E48', marginBottom: '40px' }}> {/* 更改為 #705E48 */}
           管理員帳號登入
         </h2>
 
@@ -104,7 +103,7 @@ function Login() {
 
         {/* Email and Password Input Fields */}
         <div className='mb-4 d-flex align-items-center'>
-          <label htmlFor='email' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#415A77', marginRight: '10px', width: '80px' }}>
+          <label htmlFor='email' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#705E48', marginRight: '10px', width: '80px' }}> {/* 更改為 #705E48 */}
             帳號：
           </label>
           <input
@@ -118,7 +117,7 @@ function Login() {
           />
         </div>
         <div className='mb-5 d-flex align-items-center'>
-          <label htmlFor='password' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#415A77', marginRight: '10px', width: '80px' }}>
+          <label htmlFor='password' className='form-label' style={{ textAlign: 'left', fontSize: '1.2rem', fontWeight: 'bold', color: '#705E48', marginRight: '10px', width: '80px' }}> {/* 更改為 #705E48 */}
             密碼：
           </label>
           <input
@@ -141,19 +140,19 @@ function Login() {
             width: '100%',
             fontSize: '1.3rem',
             fontWeight: 'bold',
-            backgroundColor: '#6096BA',
-            color: 'white',
+            backgroundColor: '#EFEBE6', // 更改背景顏色為 #EFEBE6
+            color: '#705E48', // 更改文字顏色為 #705E48
             borderRadius: '10px',
             padding: '12px',
             transition: 'background-color 0.3s, color 0.3s',
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = '#6096BA';
-            e.target.style.color = 'white';
+            e.target.style.backgroundColor = '#705E48'; // 滑鼠懸停時背景色變為 #705E48
+            e.target.style.color = '#EFEBE6'; // 滑鼠懸停時文字顏色變為 #EFEBE6
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = '#D3E9FF';
-            e.target.style.color='#415A77';
+            e.target.style.backgroundColor = '#EFEBE6'; // 滑鼠離開時恢復背景顏色
+            e.target.style.color='#705E48'; // 滑鼠離開時恢復文字顏色
           }}
         >
           登入

@@ -5,6 +5,7 @@ import Home from './pages/front/Home';
 import AdminPage from './pages/admin/AdminPage'; 
 import AllDoctors from './components/AllDoctors'; 
 import AllUsers from './components/AllUsers';     
+import './App.css';
 
 function App() {
   return (

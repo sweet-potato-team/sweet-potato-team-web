@@ -100,21 +100,26 @@ CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Ads` (
 ) ENGINE = InnoDB;
 
 -- 【temp_tb_Drug_Bag_Infos】藥袋資訊表
-CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Drug_Bag_Infos` (
-  `drug_bag_id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,  -- 藥袋ID
-  `sys_user_id`            INT UNSIGNED NOT NULL,                 -- 系統使用者ID
-  `drug_name`              VARCHAR(100) NOT NULL,                 -- 藥品名稱
-  `drug_dosage`            VARCHAR(100) NOT NULL,                 -- 藥品劑量
-  `drug_frequency`         VARCHAR(100) NOT NULL,                 -- 藥品使用頻率
-  `drug_time_of_use`       VARCHAR(100) NOT NULL,                 -- 藥品使用時間
-  `drug_before_or_after_meals` VARCHAR(100) NOT NULL,             -- 飯前或飯後使用
-  `drug_indication`        VARCHAR(100) NULL,                     -- 藥品適應症
-  `drug_sideeffect`        VARCHAR(100) NULL,                     -- 藥品副作用
-  `drug_med_time`          DATETIME NOT NULL,                     -- 藥品用藥時間
-  `drug_med_next_time`     DATETIME NULL,                         -- 下次用藥時間
+CREATE TABLE `temp_tb_Drug_Bag_Infos` (
+  `drug_bag_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `sys_user_id` int unsigned NOT NULL,
+  `upload_time` datetime DEFAULT NULL,
+  `user_name` varchar(100) DEFAULT NULL,
+  `user_gender` varchar(10) DEFAULT NULL,
+  `user_birth` date DEFAULT NULL,
+  `user_dispense_date` datetime DEFAULT NULL,
+  `user_weight` float DEFAULT NULL,
+  `user_age` int DEFAULT NULL,
+  `user_department` varchar(100) DEFAULT NULL,
+  `drug_dosage_days` int DEFAULT NULL,
+  `drug_name` varchar(100) DEFAULT NULL,
+  `drug_appearance` varchar(100) DEFAULT NULL,
+  `drug_sideeffect` varchar(200) DEFAULT NULL,
+  `drug_dosage` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`drug_bag_id`),
-) ENGINE = InnoDB;
-
+  UNIQUE KEY `drug_bag_id_UNIQUE` (`drug_bag_id`),
+  KEY `tb_Drug_to_user_id_idx` (`sys_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb3;
 -- -- 【temp_tb_Alert_Reminders】提醒時間表
 -- CREATE TABLE IF NOT EXISTS `cloud-db-sweet-potato`.`temp_tb_Alert_Reminders` (
 --   `sys_user_id`          INT UNSIGNED NOT NULL,     -- 使用者系統 ID【外+主】

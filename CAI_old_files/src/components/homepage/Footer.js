@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../frontpage.css'; // 确保引入 CSS 文件
 
 const Footer = () => {
   const footerStyle = {
@@ -6,12 +7,12 @@ const Footer = () => {
     color: '#EFEBE6',
     padding: '10px 0',
     textAlign: 'center',
-    width: '100%',
+    // width: '100%',
     boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
   };
 
   return (
-    <footer style={footerStyle}>
+    <footer className="Footer" style={footerStyle}>
       <div>&copy; Sweet Potato 🍠</div>
       
     </footer>

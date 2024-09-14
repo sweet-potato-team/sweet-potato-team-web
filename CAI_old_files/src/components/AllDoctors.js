@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Card from './Card';
+import Loading from '../components/Loading'; // 引入 Loading 組件
+import '../backpage.css';
 
 const AllDoctors = () => {
   const [doctors, setDoctors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // 加入 Loading 狀態
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/doctors')
-      .then(response => setDoctors(response.data))
-      .catch(error => {
+    const fetchDoctors = async () => {
+      setIsLoading(true); // 開始 Loading
+      try {
+        const response = await axios.get('http://localhost:8080/api/doctors');
+        setDoctors(response.data);
+      } catch (error) {
         console.error(error);
         // 當請求失敗時，設置一筆假資料
         setDoctors([{
@@ -17,18 +23,21 @@ const AllDoctors = () => {
           specialization: '骨科',
           hospital: '台灣大醫院'
         }]);
-      });
+      } finally {
+        setTimeout(() => setIsLoading(false), 500); // 延遲隱藏 Loading
+      }
+    };
+
+    fetchDoctors();
   }, []);
 
-  const containerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    // justifyContent: 'space-between',
-    padding: '20px',
-  };
+
+  if (isLoading) {
+    return <Loading isLoading={isLoading} />; // Loading 組件
+  }
 
   return (
-    <div style={containerStyle}>
+    <div className='listContainer' >
       {doctors.map(doctor => (
         <Card
           key={doctor.doctorId}
