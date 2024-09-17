@@ -6,7 +6,7 @@ const AllDoctors = () => {
   const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/doctors')
+    axios.get('https://sweetpotatobro.taiwan.idv.tw/api/doctors')
       .then(response => setDoctors(response.data))
       .catch(error => {
         console.error(error);

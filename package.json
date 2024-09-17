@@ -2,6 +2,7 @@
   "name": "react-final",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://store-picture-0625.web.app",
   "dependencies": {
     "@popperjs/core": "^2.11.6",
     "@testing-library/jest-dom": "^5.16.5",
@@ -11,6 +12,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.10.3",
     "cors": "^2.8.5",
+    "firebase": "^10.13.1",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.4",
@@ -23,8 +25,7 @@
     "react-scripts": "5.0.1",
     "react-switch": "^7.0.0",
     "sass": "^1.77.8",
-    "web-vitals": "^2.1.4",
-    "proxy": "http://localhost:8080"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

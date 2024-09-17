@@ -6,7 +6,7 @@ const AllUsers = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/sysUsers')
+    axios.get('https://sweetpotatobro.taiwan.idv.tw/api/sysUsers')
       .then(response => setUsers(response.data))
       .catch(error => {
         console.error(error);

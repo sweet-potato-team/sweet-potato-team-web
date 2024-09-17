@@ -10,7 +10,7 @@ function LineLoginPage() {
   //   const code = params.get('code');
   
   //   if (code) {
-  //     fetch('http://localhost:8080/api/lineLogin/token', {
+  //     fetch('https://sweetpotatobro.taiwan.idv.tw/api/lineLogin/token', {
   //       method: 'POST',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ function LineLoginPage() {
   //     })
   //       .then(response => response.json())
   //       .then(data => {
-  //         fetch(`http://localhost:8080/api/lineLogin/${data.id}`)
+  //         fetch(`https://sweetpotatobro.taiwan.idv.tw/api/lineLogin/${data.id}`)
   //           .then(response => response.json())
   //           .then(userInfo => {
   //             console.log("User info before setting state:", userInfo); // 在這裡確認userInfo是否正確
@@ -38,17 +38,18 @@ function LineLoginPage() {
     const code = params.get('code');
 
     if (code) {
-      fetch('http://localhost:8080/api/lineLogin/token', {
+      fetch('https://sweetpotatobro.taiwan.idv.tw/api/lineLogin/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code, redirectUri: 'http://localhost:3000/LineLoginPage' }),
+        // credentials: 'include',  // 確保發送帶有憑證的請求
+        body: JSON.stringify({ code, redirectUri: 'https://store-picture-0625.firebaseapp.com/LineLoginPage' }),
       })
         .then(response => response.json())
         .then(data => {
           // 結合從LINE API獲取的資料和資料庫中的資料
-          fetch(`http://localhost:8080/api/lineLogin/${data.id}`)
+          fetch(`https://sweetpotatobro.taiwan.idv.tw/api/lineLogin/${data.id}`)
             .then(response => response.json())
             .then(userInfo => {
               // 添加來自LINE的資料

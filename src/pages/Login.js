@@ -20,7 +20,7 @@ function Login() {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:8080/users/login', data);
+      const res = await axios.post('https://sweetpotatobro.taiwan.idv.tw/users/login', data);
       const { token } = res.data;
       document.cookie = `hexToken=${token}; expires=${new Date(new Date().getTime() + 3600 * 1000).toUTCString()};`;
   
